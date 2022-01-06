@@ -27,7 +27,7 @@ class AllTransactionScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(context, KidWalletScreen.routeName);
             },
-            icon: Icon(Icons.arrow_back_ios)),
+            icon: const Icon(Icons.arrow_back_ios)),
       ),
       body: SafeArea(
           child: Body(

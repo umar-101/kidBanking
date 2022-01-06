@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Kid {
   final int id;
   final String name, image;

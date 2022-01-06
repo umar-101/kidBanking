@@ -148,7 +148,7 @@ class _LogInFormState extends State<LogInForm> {
                       obsText = false;
                     });
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.visibility_off_outlined,
                   ),
                   color: Colors.black,

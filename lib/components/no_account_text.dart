@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kidbanking/screens/log_in/login.dart';
 import 'package:kidbanking/screens/sign_up/sign_up_screen.dart';
 
 import '../constants.dart';

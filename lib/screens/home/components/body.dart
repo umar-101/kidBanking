@@ -13,8 +13,8 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TopStackContainer(),
-        AddChild(),
+        const TopStackContainer(),
+        const AddChild(),
         KidDetails(
           kids: kids,
         )

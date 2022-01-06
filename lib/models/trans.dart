@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Transaction {
   final int id;
   final String title;
