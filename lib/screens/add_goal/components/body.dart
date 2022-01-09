@@ -10,8 +10,13 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(getProportionateScreenWidth(30)),
+      padding: EdgeInsets.only(
+        right: getProportionateScreenWidth(30),
+        left: getProportionateScreenWidth(30),
+        bottom: getProportionateScreenWidth(30),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: SizeConfig.screenHeight * 0.17),
           Container(
@@ -28,7 +33,7 @@ class Body extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Withdraw',
+                    'New Goal',
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -36,12 +41,12 @@ class Body extends StatelessWidget {
                   ),
                   SizedBox(height: getProportionateScreenHeight(40)),
                   FormRow(
-                    title: 'Amount',
+                    title: 'Cost',
                     textfield: buildAmountFormField(),
                   ),
                   SizedBox(height: getProportionateScreenHeight(8)),
                   FormRow(
-                    title: 'Reason',
+                    title: 'Description',
                     textfield: buildReasonFormField(),
                   ),
                   const Spacer(),
@@ -61,7 +66,9 @@ class Body extends StatelessWidget {
             ),
           ),
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: Icon(
                 Icons.cancel,
                 color: Colors.grey,

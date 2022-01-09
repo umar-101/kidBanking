@@ -43,14 +43,14 @@ class KidDetails extends StatelessWidget {
               right: getProportionateScreenWidth(20),
               bottom: getProportionateScreenWidth(10),
             ),
-            child: Container(
-              width: SizeConfig.screenWidth,
-              height: SizeConfig.screenHeight * 0.15,
-              decoration: kcontDecoration,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, KidWalletScreen.routeName);
-                },
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, KidWalletScreen.routeName);
+              },
+              child: Container(
+                width: SizeConfig.screenWidth,
+                height: SizeConfig.screenHeight * 0.15,
+                decoration: kcontDecoration,
                 child: Padding(
                   padding: EdgeInsets.all(getProportionateScreenWidth(10)),
                   child: Row(

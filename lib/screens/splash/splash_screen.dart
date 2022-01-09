@@ -14,12 +14,21 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: [SystemUiOverlay.bottom]);
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //     statusBarColor: Colors.transparent,
+  //   ));
+  //   super.initState();
+  // }
+
+  // @override
+  // void dispose() {
+  //   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+  //       overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

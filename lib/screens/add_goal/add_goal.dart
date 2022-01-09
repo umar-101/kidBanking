@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kidbanking/screens/withdraw/components/body.dart';
+import 'package:kidbanking/screens/add_goal/components/body.dart';
 
 import '../../size_config.dart';
 
