@@ -11,8 +11,9 @@ class AddKidScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return const Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFF4C4C61),
-      body: SingleChildScrollView(child: Body()),
+      body: Body(),
     );
   }
 }

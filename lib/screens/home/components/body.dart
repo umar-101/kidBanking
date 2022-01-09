@@ -38,9 +38,11 @@ class KidDetails extends StatelessWidget {
         itemCount: kids.length,
         itemBuilder: (BuildContext context, int index) {
           return Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(20),
-                vertical: getProportionateScreenHeight(10)),
+            padding: EdgeInsets.only(
+              left: getProportionateScreenWidth(20),
+              right: getProportionateScreenWidth(20),
+              bottom: getProportionateScreenWidth(10),
+            ),
             child: Container(
               width: SizeConfig.screenWidth,
               height: SizeConfig.screenHeight * 0.15,
@@ -126,10 +128,16 @@ class AddChild extends StatelessWidget {
           EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
       child: Row(
         children: [
-          Text(
-            'Kids',
-            style: TextStyle(
-                color: Colors.black, fontSize: getProportionateScreenWidth(16)),
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, KidWalletScreen.routeName);
+            },
+            child: Text(
+              'Kids',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: getProportionateScreenWidth(16)),
+            ),
           ),
           const Spacer(),
           IconButton(

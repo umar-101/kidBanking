@@ -122,17 +122,23 @@ class Body extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: getProportionateScreenHeight(15)),
-                    Container(
-                      height: SizeConfig.screenHeight * 0.30,
-                      child: ListView.builder(
-                        itemCount: transactions.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CountingRow(
-                            number: transactions[index].id,
-                            title: transactions[index].title,
-                            amount: transactions[index].balance,
-                          );
-                        },
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, AllTransactionScreen.routeName);
+                      },
+                      child: Container(
+                        height: SizeConfig.screenHeight * 0.30,
+                        child: ListView.builder(
+                          itemCount: transactions.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CountingRow(
+                              number: transactions[index].id,
+                              title: transactions[index].title,
+                              amount: transactions[index].balance,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     SizedBox(height: getProportionateScreenHeight(20)),
@@ -147,7 +153,7 @@ class Body extends StatelessWidget {
           height: SizeConfig.screenHeight * 0.15,
           decoration: kcontDecoration.copyWith(
               borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+                  topLeft: Radius.circular(5), topRight: Radius.circular(5))),
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(15)),
@@ -187,7 +193,7 @@ class TopAppContainer extends StatelessWidget {
         horizontal: getProportionateScreenWidth(20),
       ),
       child: SizedBox(
-        height: SizeConfig.screenHeight * 0.30,
+        height: SizeConfig.screenHeight * 0.27,
         width: SizeConfig.screenWidth,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

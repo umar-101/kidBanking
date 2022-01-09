@@ -13,7 +13,7 @@ class TopStackContainer extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: SizeConfig.screenHeight * 0.35,
+          height: SizeConfig.screenHeight * 0.33,
           color: Colors.white,
         ),
         Container(
@@ -23,7 +23,7 @@ class TopStackContainer extends StatelessWidget {
             padding: EdgeInsets.only(
                 left: getProportionateScreenWidth(25),
                 right: getProportionateScreenWidth(25),
-                bottom: getProportionateScreenHeight(55)),
+                bottom: getProportionateScreenHeight(30)),
             child: Row(
               children: [
                 Text(

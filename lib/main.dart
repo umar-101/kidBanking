@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/routes.dart';
+import 'package:kidbanking/screens/add_Kid/add_kid.dart';
+import 'package:kidbanking/screens/deposit/deposit.dart';
+import 'package:kidbanking/screens/goal/goal.dart';
+import 'package:kidbanking/screens/kid_wallet/kid_wallet.dart';
 
 import 'package:kidbanking/screens/splash/splash_screen.dart';
+import 'package:kidbanking/screens/withdraw/withdraw.dart';
 
 import 'package:kidbanking/theme.dart';
 

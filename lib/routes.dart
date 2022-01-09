@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:kidbanking/screens/add_Kid/add_kid.dart';
+import 'package:kidbanking/screens/add_goal/add_goal.dart';
 import 'package:kidbanking/screens/all_transaction/all_transaction.dart';
 import 'package:kidbanking/screens/deposit/deposit.dart';
 import 'package:kidbanking/screens/goal/goal.dart';
@@ -23,6 +24,7 @@ final Map<String, WidgetBuilder> routes = {
   AddKidScreen.routeName: (context) => const AddKidScreen(),
   WithDrawScreen.routeName: (context) => const WithDrawScreen(),
   DepositScreen.routeName: (context) => const DepositScreen(),
+  AddGoalScreen.routeName: (context) => const AddGoalScreen(),
   GoalScreen.routeName: (context) => const GoalScreen(),
   AllTransactionScreen.routeName: (context) => const AllTransactionScreen(),
 };

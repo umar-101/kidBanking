@@ -12,6 +12,7 @@ class Body extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(20)),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             width: SizeConfig.screenWidth,

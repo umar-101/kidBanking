@@ -12,7 +12,7 @@ class WithDrawScreen extends StatelessWidget {
     SizeConfig().init(context);
     return const Scaffold(
       backgroundColor: Color(0xFF4C4C61),
-      body: SingleChildScrollView(child: Body()),
+      body: Body(),
     );
   }
 }

@@ -10,8 +10,13 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(getProportionateScreenWidth(30)),
+      padding: EdgeInsets.only(
+        right: getProportionateScreenWidth(30),
+        left: getProportionateScreenWidth(30),
+        bottom: getProportionateScreenWidth(30),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(height: SizeConfig.screenHeight * 0.17),
           Container(
