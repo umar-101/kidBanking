@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button.dart';
 import 'package:kidbanking/components/form_error.dart';
+import 'package:kidbanking/providers/session.dart';
+import 'package:kidbanking/providers/user_provider.dart';
+import 'package:kidbanking/screens/home/home.dart';
 import 'package:kidbanking/screens/sign_up/components/sign_form.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 import '../../../size_config.dart';
@@ -102,6 +107,70 @@ class _LogInFormState extends State<LogInForm> {
       );
     }
 
+    showLoginErrorDialog(BuildContext context) {
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        content: SizedBox(
+          height: SizeConfig.screenHeight * 0.42,
+          width: SizeConfig.screenWidth,
+          child: Column(
+            children: [
+              SizedBox(height: getProportionateScreenHeight(10)),
+              // Image.asset(
+              //   "assets/images/success.png",
+              //   height: SizeConfig.screenHeight * 0.1, //40%
+              // ),
+              const Icon(
+                Icons.error,
+                size: 70,
+              ),
+              SizedBox(height: getProportionateScreenHeight(10)),
+              Text(
+                "Error",
+                style: TextStyle(
+                  fontSize: getProportionateScreenWidth(17),
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+              SizedBox(height: getProportionateScreenHeight(25)),
+              Text(
+                "Incorrect Username or password",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: getProportionateScreenWidth(14),
+                  color: Colors.grey,
+                ),
+              ),
+              const Spacer(),
+              SizedBox(
+                width: SizeConfig.screenWidth,
+                child: DefaultButton(
+                  text: "Retry",
+                  press: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+        ),
+      );
+
+      // show the dialog
+      showDialog(
+        barrierColor: const Color(0xFF797988),
+        context: context,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+    }
+
     return Form(
       key: _formKey,
       child: Padding(
@@ -169,10 +238,43 @@ class _LogInFormState extends State<LogInForm> {
               width: SizeConfig.screenWidth,
               child: DefaultButton(
                 text: "Log In",
-                press: () {
+                press: () async {
+                  // Navigator.pushNamed(context, "/home_screen");
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
-                    showLoginSuccessDialog(context);
+
+                    try {
+                      await Session.removeSession("email");
+                      print(email! + ' ' + password!);
+                      await Provider.of<UserProvider>(context, listen: false)
+                          .login(email, password)
+                          .then((value) async {
+                        print("Login Success");
+                        Provider.of<UserProvider>(context, listen: false)
+                            .loginFinished();
+                        await Session.saveSession("email", email!);
+                        await Provider.of<UserProvider>(context, listen: false)
+                            .readUserInformation();
+                        Navigator.pushNamed(context, HomeScreen.routeName);
+                      });
+                    } on FirebaseAuthException catch (e) {
+                      print('---------------');
+                      Provider.of<UserProvider>(context, listen: false)
+                          .loginFinished();
+                      print("Error code " + e.code);
+                      showLoginErrorDialog(context);
+
+                      if (e.code == "network-request-failed") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Network Error!')));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('User not found')),
+                        );
+                      }
+                    }
+
+                    // showLoginSuccessDialog(context);
                     // if all are valid then go to success screen
                     //  Navigator.pushNamed(context, CompleteProfileScreen.routeName);
                   }

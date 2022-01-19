@@ -1,6 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kidbanking/components/form_error.dart';
 import 'package:kidbanking/helper/keyboard.dart';
+import 'package:kidbanking/providers/session.dart';
+import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/home/home.dart';
+import 'package:provider/provider.dart';
 
 import '../../../components/default_button.dart';
 import '../../../constants.dart';
@@ -16,6 +21,7 @@ class SignForm extends StatefulWidget {
 class _SignFormState extends State<SignForm> {
   final _formKey = GlobalKey<FormState>();
   String? email;
+  String? name;
   String? password;
   bool? remember = false;
   final List<String?> errors = [];
@@ -52,6 +58,11 @@ class _SignFormState extends State<SignForm> {
             buildEmailFormField(),
             SizedBox(height: getProportionateScreenHeight(20)),
             const LabelText(
+              title: "Full Name",
+            ),
+            SizedBox(height: getProportionateScreenHeight(5)),
+            buildNameFormField(),
+            const LabelText(
               title: "Password",
             ),
             SizedBox(height: getProportionateScreenHeight(5)),
@@ -61,11 +72,18 @@ class _SignFormState extends State<SignForm> {
               width: SizeConfig.screenWidth,
               child: DefaultButton(
                 text: "Create Account",
-                press: () {
+                press: () async {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save();
                     // if all are valid then go to success screen
                     KeyboardUtil.hideKeyboard(context);
+                    final _auth = FirebaseAuth.instance;
+                    await _auth.createUserWithEmailAndPassword(
+                        email: email!, password: password!);
+                    Provider.of<UserProvider>(context, listen: false)
+                        .registerUser(email, name);
+                    Session.saveSession("email", email!);
+                    Session.saveSession("name", name!);
                     Navigator.pushNamed(context, HomeScreen.routeName);
                   }
                 },
@@ -111,12 +129,36 @@ class _SignFormState extends State<SignForm> {
                 // )
               ],
             ),
-            // //  FormError(errors: errors),
+            FormError(errors: errors),
             SizedBox(height: getProportionateScreenHeight(20)),
           ],
         ),
       ),
     );
+  }
+
+  TextFormField buildNameFormField() {
+    return TextFormField(
+        onSaved: (newValue) => name = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kPassNullError);
+          } else if (value.length >= 2) {
+            removeError(error: kShortPassError);
+          }
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kPassNullError);
+            return kPassNullError;
+          } else if (value.length < 2) {
+            addError(error: kShortPassError);
+            return kShortPassError;
+          }
+          return null;
+        },
+        decoration: buildInputDecoration("Enter your name").copyWith());
   }
 
   TextFormField buildPasswordFormField() {

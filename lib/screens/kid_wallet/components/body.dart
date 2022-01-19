@@ -1,18 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/counting_row.dart';
 import 'package:kidbanking/components/default_button.dart';
 import 'package:kidbanking/constants.dart';
 import 'package:kidbanking/models/trans.dart';
+import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/screens/all_transaction/all_transaction.dart';
 import 'package:kidbanking/screens/deposit/deposit.dart';
 import 'package:kidbanking/screens/goal/goal.dart';
 import 'package:kidbanking/screens/withdraw/withdraw.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
-  final List<Transaction> transactions;
-  const Body({Key? key, required this.transactions}) : super(key: key);
+  Body({
+    Key? key,
+  }) : super(key: key);
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +104,11 @@ class Body extends StatelessWidget {
                         ),
                         const Spacer(),
                         Text(
-                          '\$550.00',
+                          '\$' +
+                              Provider.of<KidProvider>(context, listen: false)
+                                  .selectedKid
+                                  .balance
+                                  .toString(),
                           style: TextStyle(
                               color: kPrimaryColor,
                               fontSize: getProportionateScreenWidth(21),
@@ -129,16 +141,46 @@ class Body extends StatelessWidget {
                       },
                       child: Container(
                         height: SizeConfig.screenHeight * 0.30,
-                        child: ListView.builder(
-                          itemCount: transactions.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return CountingRow(
-                              number: transactions[index].id,
-                              title: transactions[index].title,
-                              amount: transactions[index].balance,
-                            );
-                          },
-                        ),
+                        child: StreamBuilder<QuerySnapshot>(
+                            stream: _firestore
+                                .collection("kid_transactions")
+                                .where("username",
+                                    isEqualTo: Provider.of<KidProvider>(context,
+                                            listen: false)
+                                        .selectedKid
+                                        .username)
+                                .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return ListView.builder(
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> data =
+                                          snapshot.data!.docs[index].data()
+                                              as Map<String, dynamic>;
+                                      return CountingRow(
+                                        number: index + 1,
+                                        title: data['reason'],
+                                        amount: double.parse(
+                                            data['amount'].toString()),
+                                      );
+                                    });
+                              } else {
+                                return const Text("");
+                              }
+                              // return
+                            }),
+
+                        // ListView.builder(
+                        //   itemCount: transactions.length,
+                        //   itemBuilder: (BuildContext context, int index) {
+                        //     return CountingRow(
+                        //       number: transactions[index].id,
+                        //       title: transactions[index].title,
+                        //       amount: transactions[index].balance,
+                        //     );
+                        //   },
+                        // ),
                       ),
                     ),
                     SizedBox(height: getProportionateScreenHeight(20)),
@@ -219,7 +261,8 @@ class TopAppContainer extends StatelessWidget {
                       ),
                       SizedBox(height: getProportionateScreenHeight(15)),
                       Text(
-                        "Aviv's\nWallet",
+                        Provider.of<KidProvider>(context).selectedKid.name +
+                            "'s\nWallet",
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,

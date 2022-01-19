@@ -1,91 +1,254 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button.dart';
+import 'package:kidbanking/components/form_error.dart';
+import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/size_config.dart';
+import 'package:provider/provider.dart';
 
 import '../../../constants.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
   @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
+  final _formKey = GlobalKey<FormState>();
+
+  String msg = "";
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(getProportionateScreenWidth(20)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: SizeConfig.screenWidth,
-            height: SizeConfig.screenHeight * 0.6,
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(20),
-                vertical: getProportionateScreenHeight(30),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Add Kid',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: getProportionateScreenWidth(22)),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(40)),
-                  FormRow(
-                    title: 'Name',
-                    textfield: buildNameFormField(),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(8)),
-                  FormRow(
-                    title: 'Birthday',
-                    textfield: buildBirthdayFormField(),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(8)),
-                  FormRow(
-                    title: 'Username',
-                    textfield: buildUsernameFormField(),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(8)),
-                  FormRow(
-                    title: 'Password',
-                    textfield: buildPasswordFormField(),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: getProportionateScreenWidth(20)),
-                    child: SizedBox(
-                      width: SizeConfig.screenWidth,
-                      child: DefaultButton(
-                        text: "submit",
-                        press: () {},
+    return Form(
+      key: _formKey,
+      child: Padding(
+        padding: EdgeInsets.all(getProportionateScreenWidth(20)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.screenHeight * 0.6,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(20),
+                  vertical: getProportionateScreenHeight(30),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add Kid',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: getProportionateScreenWidth(22)),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(40)),
+                    FormRow(
+                      title: 'Name',
+                      textfield: buildNameFormField(),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(8)),
+                    FormRow(
+                      title: 'Birthday',
+                      textfield: buildBirthdayFormField(),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(8)),
+                    FormRow(
+                      title: 'Username',
+                      textfield: buildUsernameFormField(),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(8)),
+                    FormRow(
+                      title: 'Password',
+                      textfield: buildPasswordFormField(),
+                    ),
+                    const Spacer(),
+                    FormError(errors: errors),
+                    Text(
+                      msg,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: getProportionateScreenWidth(20)),
+                      child: SizedBox(
+                        width: SizeConfig.screenWidth,
+                        child: DefaultButton(
+                          text: "Submit",
+                          press: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+
+                              await Provider.of<KidProvider>(context,
+                                      listen: false)
+                                  .registerKid(
+                                      name, username, birthday, password)
+                                  .then((value) {
+                                print(value);
+                                setState(() {
+                                  name = "";
+                                  username = "";
+                                  birthday = "";
+                                  password = "";
+                                  msg = "The Kid have been added Added";
+                                });
+
+                                print("The Kid have been added Added");
+                              }).catchError((error) {
+                                print("Failed to add user: $error");
+                                if (error.code == 'weak-password') {
+                                  print('The password provided is too weak.');
+                                } else if (error.code ==
+                                    'email-already-in-use') {
+                                  print(
+                                      'The account already exists for that email.');
+                                }
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.cancel,
-                color: Colors.grey,
-                size: getProportionateScreenWidth(40),
-              ))
-        ],
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.cancel,
+                  color: Colors.grey,
+                  size: getProportionateScreenWidth(40),
+                ))
+          ],
+        ),
       ),
+    );
+  }
+
+  final List<String?> errors = [];
+
+  void addError({String? error}) {
+    if (!errors.contains(error)) {
+      setState(() {
+        errors.add(error);
+      });
+    }
+  }
+
+  void removeError({String? error}) {
+    if (errors.contains(error)) {
+      setState(() {
+        errors.remove(error);
+      });
+    }
+  }
+
+// TextEditing
+  String? name;
+  TextFormField buildNameFormField() {
+    return TextFormField(
+        keyboardType: TextInputType.name,
+        onSaved: (newValue) => name = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kEmailNullError);
+          }
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kEmailNullError);
+            return "";
+          }
+
+          return null;
+        },
+        decoration: buildInputDecoration.copyWith(hintText: 'Aviv'));
+  }
+
+  String? birthday;
+  TextFormField buildBirthdayFormField() {
+    return TextFormField(
+        keyboardType: TextInputType.datetime,
+        onSaved: (newValue) => birthday = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kEmailNullError);
+          }
+
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kEmailNullError);
+            return "";
+          }
+
+          return null;
+        },
+        decoration: buildInputDecoration.copyWith(hintText: 'dd/MM/yyyy'));
+  }
+
+  String? username;
+  TextFormField buildUsernameFormField() {
+    return TextFormField(
+        keyboardType: TextInputType.name,
+        onSaved: (newValue) => username = newValue,
+        onChanged: (value) {
+          if (value.isNotEmpty) {
+            removeError(error: kEmailNullError);
+          }
+
+          return;
+        },
+        validator: (value) {
+          if (value!.isEmpty) {
+            addError(error: kEmailNullError);
+            return "";
+          }
+          return null;
+        },
+        decoration: buildInputDecoration.copyWith(hintText: 'Aviv2012'));
+  }
+
+  String? password;
+  TextFormField buildPasswordFormField() {
+    return TextFormField(
+      obscureText: true,
+      onSaved: (newValue) => password = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kPassNullError);
+        } else if (value.length >= 8) {
+          removeError(error: kShortPassError);
+        }
+        password = value;
+      },
+      validator: (value) {
+        if (value!.isEmpty) {
+          addError(error: kPassNullError);
+          return "";
+        } else if (value.length < 8) {
+          addError(error: kShortPassError);
+          return "";
+        }
+        return null;
+      },
+      decoration: buildInputDecoration.copyWith(hintText: '********'),
     );
   }
 }
 
-class FormRow extends StatelessWidget {
+class FormRow extends StatefulWidget {
   final String title;
   final Widget textfield;
   const FormRow({
@@ -95,6 +258,11 @@ class FormRow extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<FormRow> createState() => _FormRowState();
+}
+
+class _FormRowState extends State<FormRow> {
+  @override
   Widget build(BuildContext context) {
     return Row(
       children: [
@@ -102,7 +270,7 @@ class FormRow extends StatelessWidget {
           width: getProportionateScreenWidth(70),
           child: Expanded(
             child: Text(
-              title,
+              widget.title,
               style: const TextStyle(
                 color: Colors.black87,
               ),
@@ -116,110 +284,10 @@ class FormRow extends StatelessWidget {
             right: getProportionateScreenWidth(50),
           ),
           child: SizedBox(
-              height: getProportionateScreenHeight(50), child: textfield),
+              height: getProportionateScreenHeight(50),
+              child: widget.textfield),
         ))
       ],
     );
   }
-}
-
-TextFormField buildNameFormField() {
-  return TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      // onSaved: (newValue) => email = newValue,
-      // onChanged: (value) {
-      //   if (value.isNotEmpty) {
-      //     removeError(error: kEmailNullError);
-      //   } else if (emailValidatorRegExp.hasMatch(value)) {
-      //     removeError(error: kInvalidEmailError);
-      //   }
-      //   return;
-      // },
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     addError(error: kEmailNullError);
-      //     return "";
-      //   } else if (!emailValidatorRegExp.hasMatch(value)) {
-      //     addError(error: kInvalidEmailError);
-      //     return "";
-      //   }
-      //   return null;
-      // },
-      decoration: buildInputDecoration.copyWith(hintText: 'Aviv'));
-}
-
-TextFormField buildBirthdayFormField() {
-  return TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      // onSaved: (newValue) => email = newValue,
-      // onChanged: (value) {
-      //   if (value.isNotEmpty) {
-      //     removeError(error: kEmailNullError);
-      //   } else if (emailValidatorRegExp.hasMatch(value)) {
-      //     removeError(error: kInvalidEmailError);
-      //   }
-      //   return;
-      // },
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     addError(error: kEmailNullError);
-      //     return "";
-      //   } else if (!emailValidatorRegExp.hasMatch(value)) {
-      //     addError(error: kInvalidEmailError);
-      //     return "";
-      //   }
-      //   return null;
-      // },
-      decoration: buildInputDecoration.copyWith(hintText: 'dd/MM/yyyy'));
-}
-
-TextFormField buildUsernameFormField() {
-  return TextFormField(
-      keyboardType: TextInputType.emailAddress,
-      // onSaved: (newValue) => email = newValue,
-      // onChanged: (value) {
-      //   if (value.isNotEmpty) {
-      //     removeError(error: kEmailNullError);
-      //   } else if (emailValidatorRegExp.hasMatch(value)) {
-      //     removeError(error: kInvalidEmailError);
-      //   }
-      //   return;
-      // },
-      // validator: (value) {
-      //   if (value!.isEmpty) {
-      //     addError(error: kEmailNullError);
-      //     return "";
-      //   } else if (!emailValidatorRegExp.hasMatch(value)) {
-      //     addError(error: kInvalidEmailError);
-      //     return "";
-      //   }
-      //   return null;
-      // },
-      decoration: buildInputDecoration.copyWith(hintText: 'Aviv2012'));
-}
-
-TextFormField buildPasswordFormField() {
-  return TextFormField(
-    // obscureText: true,
-    // onSaved: (newValue) => password = newValue,
-    // onChanged: (value) {
-    //   if (value.isNotEmpty) {
-    //     removeError(error: kPassNullError);
-    //   } else if (value.length >= 8) {
-    //     removeError(error: kShortPassError);
-    //   }
-    //   password = value;
-    // },
-    // validator: (value) {
-    //   if (value!.isEmpty) {
-    //     addError(error: kPassNullError);
-    //     return "";
-    //   } else if (value.length < 8) {
-    //     addError(error: kShortPassError);
-    //     return "";
-    //   }
-    //   return null;
-    // },
-    decoration: buildInputDecoration.copyWith(hintText: '********'),
-  );
 }

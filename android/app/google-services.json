@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "865003377568",
+    "project_id": "kidbanking",
+    "storage_bucket": "kidbanking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865003377568:android:7af5258f65ede33fdacac5",
+        "android_client_info": {
+          "package_name": "com.example.kidbanking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "865003377568-d01gqj845caivaidm453eke40gr1s1fd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC38bqYwTvwWiUJoIzLRaPwkYQA5UgA_wc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "865003377568-d01gqj845caivaidm453eke40gr1s1fd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

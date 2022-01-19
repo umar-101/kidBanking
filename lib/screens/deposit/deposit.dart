@@ -10,8 +10,8 @@ class DepositScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return const Scaffold(
-      backgroundColor: Color(0xFF4C4C61),
+    return Scaffold(
+      backgroundColor: const Color(0xFF4C4C61),
       body: Body(),
     );
   }

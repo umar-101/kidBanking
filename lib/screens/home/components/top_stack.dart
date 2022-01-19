@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/constants.dart';
+import 'package:kidbanking/providers/user_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 import '../../../size_config.dart';
 
 class TopStackContainer extends StatelessWidget {
@@ -27,7 +29,13 @@ class TopStackContainer extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Hi, Tomer',
+                  // ignore: unnecessary_null_comparison
+                  'Hi, '
+                      // + Provider.of<UserProvider>(context).userInfo != null
+                      +
+                      Provider.of<UserProvider>(context).userInfo.name
+                  //     : ""
+                  ,
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: getProportionateScreenWidth(24),

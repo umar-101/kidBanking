@@ -24,13 +24,18 @@ class Body extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: getProportionateScreenWidth(30)),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                "Already have an account? ",
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: getProportionateScreenWidth(14)),
+            child: InkWell(
+              onTap: () {
+                Navigator.pushNamed(context, "/login");
+              },
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Already have an account? ",
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: getProportionateScreenWidth(14)),
+                ),
               ),
             ),
           ),
