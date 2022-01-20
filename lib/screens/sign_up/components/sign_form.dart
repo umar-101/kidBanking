@@ -42,96 +42,106 @@ class _SignFormState extends State<SignForm> {
     }
   }
 
+  late Size screen;
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-        child: Column(
-          children: [
-            const LabelText(
-              title: "Your Email",
-            ),
-            SizedBox(height: getProportionateScreenHeight(5)),
-            buildEmailFormField(),
-            SizedBox(height: getProportionateScreenHeight(20)),
-            const LabelText(
-              title: "Full Name",
-            ),
-            SizedBox(height: getProportionateScreenHeight(5)),
-            buildNameFormField(),
-            const LabelText(
-              title: "Password",
-            ),
-            SizedBox(height: getProportionateScreenHeight(5)),
-            buildPasswordFormField(),
-            SizedBox(height: getProportionateScreenHeight(30)),
-            SizedBox(
-              width: SizeConfig.screenWidth,
-              child: DefaultButton(
-                text: "Create Account",
-                press: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    // if all are valid then go to success screen
-                    KeyboardUtil.hideKeyboard(context);
-                    final _auth = FirebaseAuth.instance;
-                    await _auth.createUserWithEmailAndPassword(
-                        email: email!, password: password!);
-                    Provider.of<UserProvider>(context, listen: false)
-                        .registerUser(email, name);
-                    Session.saveSession("email", email!);
-                    Session.saveSession("name", name!);
-                    Navigator.pushNamed(context, HomeScreen.routeName);
-                  }
-                },
-              ),
-            ),
-            SizedBox(
-              height: getProportionateScreenHeight(10),
-            ),
-            Row(
+    screen = MediaQuery.of(context).size;
+    return SingleChildScrollView(
+      child: Container(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(20)),
+            child: Column(
               children: [
-                Checkbox(
-                  side: BorderSide(color: Colors.grey.shade400),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  value: remember,
-                  activeColor: kPrimaryColor,
-                  onChanged: (value) {
-                    setState(() {
-                      remember = value;
-                    });
-                  },
+                const LabelText(
+                  title: "Your Email",
                 ),
-                Padding(
-                  padding:
-                      EdgeInsets.only(top: getProportionateScreenHeight(10)),
-                  child: Text(
-                    "By Creating an account you have to agree\n with our terms & conditios",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: getProportionateScreenWidth(12),
-                    ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                buildEmailFormField(),
+                SizedBox(height: getProportionateScreenHeight(20)),
+                const LabelText(
+                  title: "Full Name",
+                ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                buildNameFormField(),
+                const LabelText(
+                  title: "Password",
+                ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                buildPasswordFormField(),
+                SizedBox(height: getProportionateScreenHeight(30)),
+                SizedBox(
+                  width: SizeConfig.screenWidth,
+                  child: DefaultButton(
+                    text: "Create Account",
+                    press: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        Session.cleanAll();
+                        KeyboardUtil.hideKeyboard(context);
+                        final _auth = FirebaseAuth.instance;
+                        await _auth.createUserWithEmailAndPassword(
+                            email: email!, password: password!);
+                        Provider.of<UserProvider>(context, listen: false)
+                            .registerUser(email, name);
+                        Session.saveSession("email", email!);
+                        Session.saveSession("name", name!);
+                        await Provider.of<UserProvider>(context, listen: false)
+                            .readUserInformation();
+                        Navigator.pushNamed(context, HomeScreen.routeName);
+                      }
+                    },
                   ),
                 ),
-                // const Spacer(),
-                // GestureDetector(
-                //   onTap: () => Navigator.pushNamed(
-                //       context, ForgotPasswordScreen.routeName),
-                //   child: const Text(
-                //     "Forgot Password",
-                //     style: TextStyle(decoration: TextDecoration.underline),
-                //   ),
-                // )
+                SizedBox(
+                  height: getProportionateScreenHeight(10),
+                ),
+
+                // Row(
+                //   children: [
+                //     Checkbox(
+                //       side: BorderSide(color: Colors.grey.shade400),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(5),
+                //       ),
+                //       value: remember,
+                //       activeColor: kPrimaryColor,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           remember = value;
+                //         });
+                //       },
+                //     ),
+                //     Padding(
+                //       padding:
+                //           EdgeInsets.only(top: getProportionateScreenHeight(10)),
+                //       child: Text(
+                //         "By Creating an account you have to agree\n with our terms & conditios",
+                //         style: TextStyle(
+                //           color: Colors.grey,
+                //           fontSize: getProportionateScreenWidth(12),
+                //         ),
+                //       ),
+                //     ),
+                //     // const Spacer(),
+                //     // GestureDetector(
+                //     //   onTap: () => Navigator.pushNamed(
+                //     //       context, ForgotPasswordScreen.routeName),
+                //     //   child: const Text(
+                //     //     "Forgot Password",
+                //     //     style: TextStyle(decoration: TextDecoration.underline),
+                //     //   ),
+                //     // )
+                //   ],
+                // ),
+
+                FormError(errors: errors),
+                SizedBox(height: getProportionateScreenHeight(20)),
               ],
             ),
-            FormError(errors: errors),
-            SizedBox(height: getProportionateScreenHeight(20)),
-          ],
+          ),
         ),
       ),
     );

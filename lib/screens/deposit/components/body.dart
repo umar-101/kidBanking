@@ -16,6 +16,7 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   final _formKey = GlobalKey<FormState>();
+  String msg = "";
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +66,11 @@ class _BodyState extends State<Body> {
                       ),
                       const Spacer(),
                       FormError(errors: errors),
+                      Text(
+                        msg,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                       Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: getProportionateScreenWidth(10)),
@@ -73,13 +79,25 @@ class _BodyState extends State<Body> {
                           child: DefaultButton(
                             text: "Done",
                             press: () {
-                              // print(amountController.text);
-                              // print(reasonController.text);
+                              Provider.of<KidProvider>(context, listen: false)
+                                  .deposit(amountController.text);
                               Provider.of<KidProvider>(context, listen: false)
                                   .writeTransaction(amountController.text,
                                       reasonController.text, "deposit")
-                                  .then((value) {})
-                                  .onError((error, stackTrace) {
+                                  .then((value) {
+                                Provider.of<KidProvider>(context, listen: false)
+                                    .readKidInformation(
+                                        Provider.of<KidProvider>(context,
+                                                listen: false)
+                                            .selectedKid
+                                            .username);
+
+                                setState(() {
+                                  amountController.text = '';
+                                  reasonController.text = '';
+                                  msg = "Transaction Done";
+                                });
+                              }).onError((error, stackTrace) {
                                 print(stackTrace);
                               });
                               Navigator.pop(context);

@@ -7,7 +7,7 @@ import 'package:kidbanking/models/user_model.dart';
 import 'package:kidbanking/providers/session.dart';
 
 class UserProvider extends ChangeNotifier {
-  late UserModel _userInfo;
+  late UserModel? _userInfo = null;
   get userInfo => _userInfo;
   late bool _readingUserInfo = false;
   get readingUserInfo => _readingUserInfo;

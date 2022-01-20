@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:kidbanking/constants.dart';
 import 'package:kidbanking/models/kid.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
+import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/add_Kid/add_kid.dart';
 import 'package:kidbanking/screens/home/components/top_stack.dart';
 import 'package:kidbanking/screens/kid_wallet/kid_wallet.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class Body extends StatelessWidget {
   const Body({Key? key}) : super(key: key);
@@ -27,14 +30,48 @@ class Body extends StatelessWidget {
   }
 }
 
-class KidDetails extends StatelessWidget {
+class KidDetails extends StatefulWidget {
   final List<Kid> kids;
   KidDetails({
     Key? key,
     required this.kids,
   }) : super(key: key);
+
+  @override
+  State<KidDetails> createState() => _KidDetailsState();
+}
+
+class _KidDetailsState extends State<KidDetails> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  double totalInPocket = 0;
+  calculateAge(String bd) {
+    DateTime birthDate = DateTime.parse(bd);
+    DateTime currentDate = DateTime.now();
+    int age = currentDate.year - birthDate.year;
+    int month1 = currentDate.month;
+    int month2 = birthDate.month;
+    if (month2 > month1) {
+      age--;
+    } else if (month1 == month2) {
+      int day1 = currentDate.day;
+      int day2 = birthDate.day;
+      if (day2 > day1) {
+        age--;
+      }
+    }
+    return age;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    read();
+  }
+
+  read() {
+    Provider.of<KidProvider>(context, listen: false).readGoal();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +79,10 @@ class KidDetails extends StatelessWidget {
       child: StreamBuilder<QuerySnapshot>(
           stream: _firestore
               .collection("kids")
-              .where("email", isEqualTo: "robelwo@gmail.com")
+              .where("email",
+                  isEqualTo: Provider.of<UserProvider>(context, listen: false)
+                      .userInfo
+                      .email)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -51,6 +91,9 @@ class KidDetails extends StatelessWidget {
                   itemBuilder: (context, index) {
                     Map<String, dynamic> data = snapshot.data!.docs[index]
                         .data() as Map<String, dynamic>;
+                    Provider.of<KidProvider>(context, listen: false)
+                        .addtotalInPocket(
+                            double.parse(data['balance'].toString()), index);
                     return Padding(
                       padding: EdgeInsets.only(
                         left: getProportionateScreenWidth(20),
@@ -81,7 +124,8 @@ class KidDetails extends StatelessWidget {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image(
-                                      image: AssetImage(kids[index].image),
+                                      image:
+                                          AssetImage(widget.kids[index].image),
                                       fit: BoxFit.cover,
                                     ),
                                   ),
@@ -111,7 +155,9 @@ class KidDetails extends StatelessWidget {
                                           size: getProportionateScreenWidth(18),
                                         ),
                                         Text(
-                                          'Age ${kids[index].age}',
+                                          'Age:  ' +
+                                              calculateAge(data['birthdate'])
+                                                  .toString(),
                                           style: TextStyle(
                                             color: Colors.grey.shade400,
                                           ),
@@ -119,7 +165,7 @@ class KidDetails extends StatelessWidget {
                                       ],
                                     ),
                                     Text(
-                                      ' \$ ${kids[index].balance}',
+                                      ' \$ ${data["balance"]}',
                                       style: TextStyle(
                                           color: kPrimaryColor,
                                           fontSize:

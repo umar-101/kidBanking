@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/constants.dart';
+import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,10 @@ class TopStackContainer extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          '\$ 1200.00',
+                          '\$ ' +
+                              Provider.of<KidProvider>(context)
+                                  .getTotalInPocket
+                                  .toString(),
                           style: kSmallHeading.copyWith(color: Colors.black),
                         ),
                         const Spacer(),

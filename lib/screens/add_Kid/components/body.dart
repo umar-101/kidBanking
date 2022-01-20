@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button.dart';
 import 'package:kidbanking/components/form_error.dart';
+import 'package:kidbanking/helper/Datepicker.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class _BodyState extends State<Body> {
   final _formKey = GlobalKey<FormState>();
 
   String msg = "";
+  late String selectedDate = "";
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -55,7 +57,16 @@ class _BodyState extends State<Body> {
                     SizedBox(height: getProportionateScreenHeight(8)),
                     FormRow(
                       title: 'Birthday',
-                      textfield: buildBirthdayFormField(),
+                      textfield: InkWell(
+                          onTap: () async {
+                            DateTime d = await Datepicker.selectDate(context);
+                            print(d);
+                            DateTime fromDate = d;
+                            setState(() {
+                              selectedDate = fromDate.toString().split(" ")[0];
+                            });
+                          },
+                          child: buildBirthdayFormField()),
                     ),
                     SizedBox(height: getProportionateScreenHeight(8)),
                     FormRow(
@@ -88,7 +99,7 @@ class _BodyState extends State<Body> {
                               await Provider.of<KidProvider>(context,
                                       listen: false)
                                   .registerKid(
-                                      name, username, birthday, password)
+                                      name, username, selectedDate, password)
                                   .then((value) {
                                 print(value);
                                 setState(() {
@@ -99,8 +110,15 @@ class _BodyState extends State<Body> {
                                   msg = "The Kid have been added Added";
                                 });
 
-                                print("The Kid have been added Added");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'The Kid have been added Added!')));
                               }).catchError((error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Failed to Register your Kid. please retry')));
                                 print("Failed to add user: $error");
                                 if (error.code == 'weak-password') {
                                   print('The password provided is too weak.');
@@ -110,6 +128,7 @@ class _BodyState extends State<Body> {
                                       'The account already exists for that email.');
                                 }
                               });
+                              Navigator.pop(context);
                             }
                           },
                         ),
@@ -178,24 +197,26 @@ class _BodyState extends State<Body> {
   String? birthday;
   TextFormField buildBirthdayFormField() {
     return TextFormField(
-        keyboardType: TextInputType.datetime,
-        onSaved: (newValue) => birthday = newValue,
-        onChanged: (value) {
-          if (value.isNotEmpty) {
-            removeError(error: kEmailNullError);
-          }
+        enabled: false,
+        // keyboardType: TextInputType.datetime,
+        // onSaved: (newValue) => birthday = newValue,
+        // onChanged: (value) {
+        //   if (value.isNotEmpty) {
+        //     removeError(error: kEmailNullError);
+        //   }
 
-          return;
-        },
-        validator: (value) {
-          if (value!.isEmpty) {
-            addError(error: kEmailNullError);
-            return "";
-          }
+        //   return;
+        // },
+        // validator: (value) {
+        //   if (value!.isEmpty) {
+        //     addError(error: kEmailNullError);
+        //     return "";
+        //   }
 
-          return null;
-        },
-        decoration: buildInputDecoration.copyWith(hintText: 'dd/MM/yyyy'));
+        //   return null;
+        // },
+
+        decoration: buildInputDecoration.copyWith(hintText: selectedDate));
   }
 
   String? username;

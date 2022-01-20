@@ -13,6 +13,14 @@ class KidProvider extends ChangeNotifier {
     kidUn = un;
   }
 
+  double totalInPocket = 0;
+  get getTotalInPocket => totalInPocket;
+  addtotalInPocket(double a, index) {
+    if (index == 0) totalInPocket = 0;
+    totalInPocket = totalInPocket + a;
+    notifyListeners();
+  }
+
   readKidInformation(username) async {
     await FirebaseFirestore.instance
         .collection('kids')
@@ -20,7 +28,6 @@ class KidProvider extends ChangeNotifier {
         .get()
         .then(
       (snapshot) {
-        List<DocumentSnapshot> templist = snapshot.docs; // <--- ERROR
         var doc = snapshot.docs[0];
         Session.saveSession("kid_email", doc['email']);
         Session.saveSession("kid_name", doc['name']);
@@ -39,13 +46,13 @@ class KidProvider extends ChangeNotifier {
 
   Future registerKid(name, username, birthdate, password) async {
     CollectionReference kids = FirebaseFirestore.instance.collection('kids');
-    return await kids.add({
+    await kids.add({
       "email": await Session.readSession("email"),
       'username': username,
       'name': name,
       'balance': 0,
       'birthdate': birthdate,
-      "password": password
+      "password": password,
     });
   }
 
@@ -64,21 +71,79 @@ class KidProvider extends ChangeNotifier {
     );
   }
 
-  Future writeGoals(username, cost, description) async {
+  Future writeGoals(cost, description) async {
     CollectionReference goals = FirebaseFirestore.instance.collection('goals');
     return await goals.add(
       {
         "email": await Session.readSession("email"),
-        'username': username,
+        'username': selectedKid.username,
         'cost': cost,
         "status": "pending",
         'description': description,
-        "datetime": DateFormat.yMd().format(DateTime.now())
+        "datetime": DateTime.now()
       },
     );
   }
 
-  // Future widthdraw() {}
+  widthdraw(amount) async {
+    await FirebaseFirestore.instance
+        .collection('kids')
+        .where('username', isEqualTo: selectedKid.username)
+        .get()
+        .then(
+      (snapshot) async {
+        var doc = snapshot.docs[0];
+        double balance = double.parse(doc['balance'].toString());
+        balance = balance - double.parse(amount.toString());
+        await FirebaseFirestore.instance
+            .collection('kids')
+            .doc(snapshot.docs[0].id)
+            .update({"balance": balance});
+      },
+    );
+  }
 
-  // Future deposit() {}
+  deposit(amount) async {
+    await FirebaseFirestore.instance
+        .collection('kids')
+        .where('username', isEqualTo: selectedKid.username)
+        .get()
+        .then(
+      (snapshot) async {
+        var doc = snapshot.docs[0];
+        double balance = double.parse(doc['balance'].toString());
+        balance = balance + double.parse(amount.toString());
+        await FirebaseFirestore.instance
+            .collection('kids')
+            .doc(snapshot.docs[0].id)
+            .update({"balance": balance});
+      },
+    );
+  }
+
+  Future markGoalAsCompleted(id) async {
+    await FirebaseFirestore.instance
+        .collection('goals')
+        .doc(id)
+        .update({"status": "completed"});
+  }
+
+  List<String> goals = [];
+  get getGoals => goals;
+
+  readGoal() async {
+    goals = [];
+    notifyListeners();
+    await FirebaseFirestore.instance
+        .collection('goals')
+        .where('username', isEqualTo: selectedKid.username)
+        .get()
+        .then(
+      (snapshot) {
+        var doc = snapshot.docs[0];
+        goals.add(doc['description']);
+        notifyListeners();
+      },
+    );
+  }
 }

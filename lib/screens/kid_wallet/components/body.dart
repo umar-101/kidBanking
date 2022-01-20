@@ -70,28 +70,31 @@ class Body extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: getProportionateScreenHeight(15)),
-                    SizedBox(
-                      height: SizeConfig.screenHeight * 0.06,
-                      child: Column(
-                        children: [
-                          Text(
-                            'Buy XBox',
-                            style: TextStyle(
-                                color: const Color(0xFFA843DB),
-                                fontWeight: FontWeight.w600,
-                                fontSize: getProportionateScreenWidth(17)),
-                          ),
-                          Expanded(
-                            child: LinearPercentIndicator(
-                              lineHeight: 7,
-                              percent: 0.5,
-                              backgroundColor: Colors.grey.shade200,
-                              progressColor: const Color(0xFFFF7C26),
+                    Provider.of<KidProvider>(context).getGoals.length > 0
+                        ? SizedBox(
+                            height: SizeConfig.screenHeight * 0.06,
+                            child: Column(
+                              children: [
+                                Text(
+                                  Provider.of<KidProvider>(context).getGoals[0],
+                                  style: TextStyle(
+                                      color: const Color(0xFFA843DB),
+                                      fontWeight: FontWeight.w600,
+                                      fontSize:
+                                          getProportionateScreenWidth(17)),
+                                ),
+                                Expanded(
+                                  child: LinearPercentIndicator(
+                                    lineHeight: 7,
+                                    percent: 0.5,
+                                    backgroundColor: Colors.grey.shade200,
+                                    progressColor: const Color(0xFFFF7C26),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
+                          )
+                        : const Text(""),
                     SizedBox(height: getProportionateScreenHeight(15)),
                     Row(
                       children: [
@@ -103,17 +106,25 @@ class Body extends StatelessWidget {
                               fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
-                        Text(
-                          '\$' +
-                              Provider.of<KidProvider>(context, listen: false)
-                                  .selectedKid
-                                  .balance
-                                  .toString(),
-                          style: TextStyle(
-                              color: kPrimaryColor,
-                              fontSize: getProportionateScreenWidth(21),
-                              fontWeight: FontWeight.bold),
-                        )
+                        Provider.of<KidProvider>(context).selectedKid != null
+                            ? Text(
+                                '\$' +
+                                    Provider.of<KidProvider>(context)
+                                        .selectedKid
+                                        .balance
+                                        .toString(),
+                                style: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontSize: getProportionateScreenWidth(21),
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Text(
+                                '\$0.0',
+                                style: TextStyle(
+                                    color: kPrimaryColor,
+                                    fontSize: getProportionateScreenWidth(21),
+                                    fontWeight: FontWeight.bold),
+                              )
                       ],
                     ),
                     SizedBox(height: getProportionateScreenHeight(15)),
@@ -245,7 +256,7 @@ class TopAppContainer extends StatelessWidget {
             Row(
               children: [
                 SizedBox(
-                  width: getProportionateScreenWidth(80),
+                  width: getProportionateScreenWidth(120),
                   child: Column(
                     children: [
                       SizedBox(

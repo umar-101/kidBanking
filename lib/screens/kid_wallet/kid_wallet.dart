@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kidbanking/models/trans.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/screens/kid_wallet/components/body.dart';
 import 'package:provider/provider.dart';
-
 import '../../size_config.dart';
 
 class KidWalletScreen extends StatefulWidget {
@@ -24,6 +22,7 @@ class _KidWalletScreenState extends State<KidWalletScreen> {
   read() {
     Provider.of<KidProvider>(context, listen: false).readKidInformation(
         Provider.of<KidProvider>(context, listen: false).kidUn);
+    Provider.of<KidProvider>(context, listen: false).readGoal();
   }
 
   @override

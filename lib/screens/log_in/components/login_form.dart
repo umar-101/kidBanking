@@ -245,7 +245,6 @@ class _LogInFormState extends State<LogInForm> {
 
                     try {
                       await Session.removeSession("email");
-                      print(email! + ' ' + password!);
                       await Provider.of<UserProvider>(context, listen: false)
                           .login(email, password)
                           .then((value) async {
@@ -258,7 +257,6 @@ class _LogInFormState extends State<LogInForm> {
                         Navigator.pushNamed(context, HomeScreen.routeName);
                       });
                     } on FirebaseAuthException catch (e) {
-                      print('---------------');
                       Provider.of<UserProvider>(context, listen: false)
                           .loginFinished();
                       print("Error code " + e.code);
