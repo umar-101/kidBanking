@@ -4,18 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class AppleLogin extends StatefulWidget {
+  const AppleLogin({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  _AppleLoginState createState() => _AppleLoginState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AppleLoginState extends State<AppleLogin> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,10 +45,8 @@ class _MyAppState extends State<MyApp> {
                   nonce: 'example-nonce',
                   state: 'example-state',
                 );
-
                 // ignore: avoid_print
                 print(credential);
-
                 // This is the endpoint that will convert an authorization code obtained
                 // via Sign in with Apple into a session in your system
                 final signInWithAppleEndpoint = Uri(

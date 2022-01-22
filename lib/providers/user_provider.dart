@@ -49,6 +49,7 @@ class UserProvider extends ChangeNotifier {
     print(email + " " + password);
     _loggingIn = true;
     notifyListeners();
+
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
         .then(

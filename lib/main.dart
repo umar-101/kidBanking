@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/routes.dart';
-import 'package:kidbanking/screens/log_in/login2.dart';
 import 'package:kidbanking/screens/splash/splash_screen.dart';
 import 'package:kidbanking/theme.dart';
 import 'package:provider/provider.dart';
@@ -31,9 +30,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme(),
-      home: SignInDemo(),
-      // const HomeScreen(),
-      // const SplashScreen(),
+      home:
+          //  const AppleLogin(),
+          // SignInDemo(),
+          // const HomeScreen(),
+          const SplashScreen(),
       // We use routeName so that we dont need to remember the name
       // initialRoute: SplashScreen.routeName,
       routes: routes,
