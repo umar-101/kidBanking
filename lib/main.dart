@@ -3,15 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/routes.dart';
-import 'package:kidbanking/screens/add_Kid/add_kid.dart';
-import 'package:kidbanking/screens/deposit/deposit.dart';
-import 'package:kidbanking/screens/goal/goal.dart';
-import 'package:kidbanking/screens/home/home.dart';
-import 'package:kidbanking/screens/kid_wallet/kid_wallet.dart';
-
+import 'package:kidbanking/screens/log_in/login2.dart';
 import 'package:kidbanking/screens/splash/splash_screen.dart';
-import 'package:kidbanking/screens/withdraw/withdraw.dart';
-
 import 'package:kidbanking/theme.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +24,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -39,9 +31,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme(),
-      home:
-          // const HomeScreen(),
-          const SplashScreen(),
+      home: SignInDemo(),
+      // const HomeScreen(),
+      // const SplashScreen(),
       // We use routeName so that we dont need to remember the name
       // initialRoute: SplashScreen.routeName,
       routes: routes,

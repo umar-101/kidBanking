@@ -7,9 +7,14 @@ import 'package:kidbanking/screens/sign_up/components/body.dart';
 import '../../../size_config.dart';
 import 'login_form.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
 
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
