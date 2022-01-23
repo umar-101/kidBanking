@@ -15,6 +15,7 @@ import '../../../size_config.dart';
 import 'login_form.dart';
 // import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class Body extends StatefulWidget {
   const Body({Key? key}) : super(key: key);
@@ -48,7 +49,7 @@ class _BodyState extends State<Body> {
             children: [
               SocalCard(
                 icon: "assets/images/apple-logo.png",
-                press: () {},
+                press: signinWithApple,
               ),
               SocalCard(
                 icon: "assets/images/google.png",
@@ -58,7 +59,7 @@ class _BodyState extends State<Body> {
               ),
               SocalCard(
                 icon: "assets/images/facebook.png",
-                press: () {},
+                press: signInWithFacebook,
               ),
             ],
           ),
@@ -137,6 +138,44 @@ class _BodyState extends State<Body> {
   //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   // }
 
+  Future<Resource?> signInWithFacebook() async {
+    try {
+      print("heee");
+      User? user;
+      FacebookAuth.instance.logOut();
+      final LoginResult result = await FacebookAuth.instance.login();
+      print(result);
+
+      switch (result.status) {
+        case LoginStatus.success:
+          final AuthCredential facebookCredential =
+              FacebookAuthProvider.credential(result.accessToken!.token);
+          final userCredential = await FirebaseAuth.instance
+              .signInWithCredential(facebookCredential);
+          user = userCredential.user;
+          if (user!.emailVerified) {
+            Provider.of<UserProvider>(context, listen: false)
+                .registerUser(user.email, user.displayName);
+            Provider.of<UserProvider>(context, listen: false).loginFinished();
+            await Session.saveSession("email", user.email!);
+            await Session.saveSession("name", user.displayName!);
+            await Provider.of<UserProvider>(context, listen: false)
+                .readUserInformation();
+            Navigator.pushNamed(context, HomeScreen.routeName);
+          }
+          return Resource(status: Status.Success);
+        case LoginStatus.cancelled:
+          return Resource(status: Status.Cancelled);
+        case LoginStatus.failed:
+          return Resource(status: Status.Error);
+        default:
+          return null;
+      }
+    } on FirebaseAuthException catch (e) {
+      throw e;
+    }
+  }
+
   Future signinWithApple() async {
     final credential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -194,3 +233,10 @@ class _BodyState extends State<Body> {
     );
   }
 }
+
+class Resource {
+  final Status status;
+  Resource({required this.status});
+}
+
+enum Status { Success, Error, Cancelled }

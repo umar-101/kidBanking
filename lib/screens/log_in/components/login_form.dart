@@ -235,6 +235,7 @@ class _LogInFormState extends State<LogInForm> {
             ),
             SizedBox(height: getProportionateScreenHeight(10)),
             SizedBox(
+              height: getProportionateScreenHeight(70),
               width: SizeConfig.screenWidth,
               child: DefaultButton(
                 text: "Log In",
