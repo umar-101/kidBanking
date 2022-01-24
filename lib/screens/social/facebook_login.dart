@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:kidbanking/components/my_snack_bar.dart';
 import 'package:kidbanking/providers/session.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/home/home.dart';
@@ -41,10 +42,8 @@ class MyFacebooklogin {
           return null;
       }
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        customSnackBar(
-          content: 'Error occurred using Google Sign-In. Try again.',
-        ),
+      const MySnackBar(
+        content: 'Error occurred using Google Sign-In. Try again.',
       );
     }
   }

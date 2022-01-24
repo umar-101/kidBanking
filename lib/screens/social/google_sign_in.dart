@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:kidbanking/components/my_snack_bar.dart';
 import 'package:kidbanking/providers/session.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/home/home.dart';
@@ -39,25 +40,19 @@ class MyGoogleSignIn {
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            customSnackBar(
-              content:
-                  'The account already exists with a different credential.',
-            ),
+          const MySnackBar(
+            content: 'The account already exists with a different credential.',
           );
         } else if (e.code == 'invalid-credential') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            customSnackBar(
-              content: 'Error occurred while accessing credentials. Try again.',
-            ),
+          const MySnackBar(
+            content: 'Error occurred while accessing credentials. Try again.',
           );
         }
       } catch (e) {
         print("--------exceptionnnnn 222222------");
-        ScaffoldMessenger.of(context).showSnackBar(
-          customSnackBar(
-            content: 'Error occurred using Google Sign-In. Try again.',
-          ),
+
+        const MySnackBar(
+          content: 'Error occurred using Google Sign-In. Try again.',
         );
         // handle the error here
       }
@@ -66,13 +61,13 @@ class MyGoogleSignIn {
     return user;
   }
 
-  static SnackBar customSnackBar({required String content}) {
-    return SnackBar(
-      backgroundColor: Colors.black,
-      content: Text(
-        content,
-        style: const TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
-      ),
-    );
-  }
+  // static SnackBar customSnackBar({required String content}) {
+  //   return SnackBar(
+  //     backgroundColor: Colors.black,
+  //     content: Text(
+  //       content,
+  //       style: const TextStyle(color: Colors.redAccent, letterSpacing: 0.5),
+  //     ),
+  //   );
+  // }
 }
