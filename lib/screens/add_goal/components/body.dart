@@ -180,6 +180,7 @@ class FormRow extends StatelessWidget {
       children: [
         SizedBox(
           width: getProportionateScreenWidth(70),
+          height: 100,
           child: Expanded(
             child: Text(
               title,

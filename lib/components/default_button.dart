@@ -8,16 +8,15 @@ class DefaultButton extends StatelessWidget {
     Key? key,
     this.text,
     this.press,
+    this.width,
   }) : super(key: key);
   final String? text;
   final Function? press;
-
+  final double? width;
   @override
   Widget build(BuildContext context) {
-    return
-        // Expanded(
-        //   child:
-        SizedBox(
+    return SizedBox(
+      width: width,
       height: getProportionateScreenHeight(56),
       child: TextButton(
         style: TextButton.styleFrom(
@@ -35,7 +34,6 @@ class DefaultButton extends StatelessWidget {
           ),
         ),
       ),
-      // ),
     );
   }
 }

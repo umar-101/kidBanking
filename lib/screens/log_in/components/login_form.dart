@@ -20,8 +20,8 @@ class LogInForm extends StatefulWidget {
 
 class _LogInFormState extends State<LogInForm> {
   final _formKey = GlobalKey<FormState>();
-  String? email;
-  String? password;
+  String? email = "solome@gmail.com";
+  String? password = "12345678";
   // ignore: non_constant_identifier_names
   String? conform_password;
   bool remember = false;
@@ -43,6 +43,8 @@ class _LogInFormState extends State<LogInForm> {
       });
     }
   }
+
+  bool loggingIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +109,7 @@ class _LogInFormState extends State<LogInForm> {
       );
     }
 
-    showLoginErrorDialog(BuildContext context) {
+    showLoginErrorDialog(BuildContext context, msg) {
       // set up the AlertDialog
       AlertDialog alert = AlertDialog(
         shape: RoundedRectangleBorder(
@@ -138,7 +140,7 @@ class _LogInFormState extends State<LogInForm> {
               ),
               SizedBox(height: getProportionateScreenHeight(25)),
               Text(
-                "Incorrect Username or password",
+                msg,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: getProportionateScreenWidth(14),
@@ -171,118 +173,155 @@ class _LogInFormState extends State<LogInForm> {
       );
     }
 
-    return Form(
-      key: _formKey,
-      child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-        child: Column(
-          children: [
-            const LabelText(
-              title: "Your Email",
-            ),
-            SizedBox(height: getProportionateScreenHeight(5)),
-            buildEmailFormField(),
-            SizedBox(height: getProportionateScreenHeight(20)),
-            const LabelText(
-              title: "Password",
-            ),
-            SizedBox(height: getProportionateScreenHeight(5)),
-            TextFormField(
-                obscureText: obsText,
-                onSaved: (newValue) => password = newValue,
-                onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    removeError(error: kPassNullError);
-                  } else if (value.length >= 8) {
-                    removeError(error: kShortPassError);
-                  }
-                  password = value;
-                },
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    addError(error: kPassNullError);
-                    return "";
-                  } else if (value.length < 8) {
-                    addError(error: kShortPassError);
-                    return "";
-                  }
-                  return null;
-                },
-                decoration:
-                    buildInputDecoration("Enter your password").copyWith(
-                        suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      obsText = false;
-                    });
-                  },
-                  icon: const Icon(
-                    Icons.visibility_off_outlined,
-                  ),
-                  color: Colors.black,
-                ))),
-            SizedBox(height: getProportionateScreenHeight(20)),
-            FormError(errors: errors),
-            Align(
-              alignment: Alignment.topRight,
-              child: Text(
-                "Forget password? ",
-                style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: getProportionateScreenWidth(14)),
-              ),
-            ),
-            SizedBox(height: getProportionateScreenHeight(10)),
-            SizedBox(
-              height: getProportionateScreenHeight(70),
-              width: SizeConfig.screenWidth,
-              child: DefaultButton(
-                text: "Log In",
-                press: () async {
-                  // Navigator.pushNamed(context, "/home_screen");
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-
-                    try {
-                      await Session.removeSession("email");
-                      await Provider.of<UserProvider>(context, listen: false)
-                          .login(email, password)
-                          .then((value) async {
-                        print("Login Success");
-                        Provider.of<UserProvider>(context, listen: false)
-                            .loginFinished();
-                        await Session.saveSession("email", email!);
-                        await Provider.of<UserProvider>(context, listen: false)
-                            .readUserInformation();
-                        Navigator.pushNamed(context, HomeScreen.routeName);
-                      });
-                    } on FirebaseAuthException catch (e) {
-                      Provider.of<UserProvider>(context, listen: false)
-                          .loginFinished();
-                      print("Error code " + e.code);
-                      showLoginErrorDialog(context);
-
-                      if (e.code == "network-request-failed") {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Network Error!')));
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('User not found')),
-                        );
-                      }
+    return Stack(
+      children: [
+        Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: getProportionateScreenWidth(20)),
+            child: Column(
+              children: [
+                const LabelText(
+                  title: "Your Email",
+                ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                buildEmailFormField(),
+                SizedBox(height: getProportionateScreenHeight(20)),
+                const LabelText(
+                  title: "Password",
+                ),
+                SizedBox(height: getProportionateScreenHeight(5)),
+                TextFormField(
+                  obscureText: obsText,
+                  onSaved: (newValue) => password = newValue,
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      removeError(error: kPassNullError);
+                    } else if (value.length >= 8) {
+                      removeError(error: kShortPassError);
                     }
+                    password = value;
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      addError(error: kPassNullError);
+                      return "";
+                    } else if (value.length < 8) {
+                      addError(error: kShortPassError);
+                      return "";
+                    }
+                    return null;
+                  },
+                  decoration:
+                      buildInputDecoration("Enter your password").copyWith(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          obsText = !obsText;
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.visibility_off_outlined,
+                      ),
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(20)),
+                FormError(errors: errors),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Text(
+                    "Forget password? ",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: getProportionateScreenWidth(14)),
+                  ),
+                ),
+                SizedBox(height: getProportionateScreenHeight(10)),
+                SizedBox(
+                  height: getProportionateScreenHeight(70),
+                  width: SizeConfig.screenWidth,
+                  child: DefaultButton(
+                    text: "Log In",
+                    press: () async {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        try {
+                          setState(() {
+                            loggingIn = true;
+                          });
+                          await Session.removeSession("email");
+                          await Provider.of<UserProvider>(context,
+                                  listen: false)
+                              .login(email, password)
+                              .then((value) async {
+                            print("Login Success");
+                            Provider.of<UserProvider>(context, listen: false)
+                                .loginFinished();
+                            await Session.saveSession("email", email!);
+                            await Provider.of<UserProvider>(context,
+                                    listen: false)
+                                .readUserInformation();
+                            setState(() {
+                              loggingIn = false;
+                            });
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()),
+                            );
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const HomeScreen()));
 
-                    // showLoginSuccessDialog(context);
-                    // if all are valid then go to success screen
-                    //  Navigator.pushNamed(context, CompleteProfileScreen.routeName);
-                  }
-                },
-              ),
+                            // Navigator.pushNamed(context, HomeScreen.routeName);
+                          });
+                        } on FirebaseAuthException catch (e) {
+                          Provider.of<UserProvider>(context, listen: false)
+                              .loginFinished();
+                          setState(() {
+                            loggingIn = false;
+                          });
+                          print("Error code " + e.code);
+                          if (e.code == "network-request-failed") {
+                            // showLoginErrorDialog(
+                            //     context, "Check your Internet Connection!");
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Network Error!')));
+                          } else {
+                            // showLoginErrorDialog(
+                            //     context, "Registeration Failed!");
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('User not found')),
+                            );
+                          }
+                        }
+
+                        // showLoginSuccessDialog(context);
+                        // if all are valid then go to success screen
+                        //  Navigator.pushNamed(context, CompleteProfileScreen.routeName);
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        loggingIn
+            ? Container(
+                margin: EdgeInsets.only(top: SizeConfig.screenHeight * 0.2),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : Text(""),
+      ],
     );
   }
 

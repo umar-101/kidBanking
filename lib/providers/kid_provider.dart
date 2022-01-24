@@ -140,9 +140,11 @@ class KidProvider extends ChangeNotifier {
         .get()
         .then(
       (snapshot) {
-        var doc = snapshot.docs[0];
-        goals.add(doc['description']);
-        notifyListeners();
+        if (snapshot.docs.isNotEmpty) {
+          var doc = snapshot.docs[0];
+          goals.add(doc['description']);
+          notifyListeners();
+        }
       },
     );
   }

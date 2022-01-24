@@ -66,11 +66,6 @@ class _KidDetailsState extends State<KidDetails> {
   @override
   void initState() {
     super.initState();
-    read();
-  }
-
-  read() {
-    Provider.of<KidProvider>(context, listen: false).readGoal();
   }
 
   @override
@@ -91,9 +86,13 @@ class _KidDetailsState extends State<KidDetails> {
                   itemBuilder: (context, index) {
                     Map<String, dynamic> data = snapshot.data!.docs[index]
                         .data() as Map<String, dynamic>;
-                    Provider.of<KidProvider>(context, listen: false)
-                        .addtotalInPocket(
-                            double.parse(data['balance'].toString()), index);
+
+                    WidgetsBinding.instance?.addPostFrameCallback((_) =>
+                        Provider.of<KidProvider>(context, listen: false)
+                            .addtotalInPocket(
+                                double.parse(data['balance'].toString()),
+                                index));
+
                     return Padding(
                       padding: EdgeInsets.only(
                         left: getProportionateScreenWidth(20),

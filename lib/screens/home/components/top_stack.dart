@@ -32,21 +32,29 @@ class TopStackContainer extends StatelessWidget {
                 Text(
                   // ignore: unnecessary_null_comparison
                   'Hi, '
-                      // + Provider.of<UserProvider>(context).userInfo != null
+                      // + Provider.of<UserProvider>(context).userInfo.te
                       +
-                      Provider.of<UserProvider>(context).userInfo.name
-                  //     : ""
-                  ,
+                      Provider.of<UserProvider>(context)
+                          .userInfo
+                          .name
+                          .toString(),
+                  // : "",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: getProportionateScreenWidth(24),
                       fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
-                CircleAvatar(
-                  radius: getProportionateScreenWidth(20),
-                  backgroundImage:
-                      const AssetImage('assets/images/personavater.png'),
+                InkWell(
+                  onTap: () {
+                    Provider.of<UserProvider>(context, listen: false).logout();
+                    Navigator.pushNamed(context, "/login");
+                  },
+                  child: CircleAvatar(
+                    radius: getProportionateScreenWidth(20),
+                    backgroundImage:
+                        const AssetImage('assets/images/personavater.png'),
+                  ),
                 )
               ],
             ),

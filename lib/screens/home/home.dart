@@ -21,14 +21,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   read() {
-    Provider.of<UserProvider>(context, listen: false).readUserInfo();
+    WidgetsBinding.instance?.addPostFrameCallback((_) =>
+        Provider.of<UserProvider>(context, listen: false).readUserInfo());
   }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return const Scaffold(
-      body: Body(),
+    return Scaffold(
+      body: Provider.of<UserProvider>(context).readingUserInfo
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : const Body(),
     );
   }
 }

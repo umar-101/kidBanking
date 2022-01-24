@@ -181,90 +181,92 @@ class GoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        width: 200,
-        height: SizeConfig.screenHeight * 0.30,
-        decoration: kcontDecoration.copyWith(color: bgColor),
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 20, left: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.cancel),
-                  color: Colors.grey,
-                  iconSize: getProportionateScreenWidth(20),
-                ),
+    return
+        // Expanded(
+        //   child:
+        Container(
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      width: 200,
+      height: SizeConfig.screenHeight * 0.30,
+      decoration: kcontDecoration.copyWith(color: bgColor),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20, left: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.cancel),
+                color: Colors.grey,
+                iconSize: getProportionateScreenWidth(20),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: SizeConfig.screenWidth * 0.25,
-                      height: SizeConfig.screenHeight * 0.07,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: SizeConfig.screenWidth * 0.25,
+                    height: SizeConfig.screenHeight * 0.07,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: getProportionateScreenWidth(17),
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Cost',
+                        style: TextStyle(color: Colors.grey.shade900),
+                      ),
+                      const Spacer(),
+                      Text(
+                        cost,
+                        style: TextStyle(color: Colors.grey.shade900),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(10)),
+                  LinearPercentIndicator(
+                    // width: SizeConfig.screenWidth * 0.35,
+                    lineHeight: 7,
+                    percent: perValue,
+                    backgroundColor: Colors.white54,
+                    progressColor: barColor,
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(10)),
+                  Text(
+                    '80%',
+                    style: TextStyle(color: Colors.grey.shade900),
+                  ),
+                  SizedBox(height: getProportionateScreenHeight(20)),
+                  InkWell(
+                    onTap: () {
+                      Provider.of<KidProvider>(context, listen: false)
+                          .markGoalAsCompleted(documentId)
+                          .then((value) {});
+                    },
+                    child: const Align(
+                      alignment: Alignment.bottomCenter,
                       child: Text(
-                        title,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: getProportionateScreenWidth(17),
-                            fontWeight: FontWeight.bold),
+                        'Mark Completed',
+                        style: TextStyle(color: kPrimaryColor),
                       ),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'Cost',
-                          style: TextStyle(color: Colors.grey.shade900),
-                        ),
-                        const Spacer(),
-                        Text(
-                          cost,
-                          style: TextStyle(color: Colors.grey.shade900),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(10)),
-                    LinearPercentIndicator(
-                      // width: SizeConfig.screenWidth * 0.35,
-                      lineHeight: 7,
-                      percent: perValue,
-                      backgroundColor: Colors.white54,
-                      progressColor: barColor,
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(10)),
-                    Text(
-                      '80%',
-                      style: TextStyle(color: Colors.grey.shade900),
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(20)),
-                    InkWell(
-                      onTap: () {
-                        Provider.of<KidProvider>(context, listen: false)
-                            .markGoalAsCompleted(documentId)
-                            .then((value) {});
-                      },
-                      child: const Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Text(
-                          'Mark Completed',
-                          style: TextStyle(color: kPrimaryColor),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
+      // ),
     );
   }
 }

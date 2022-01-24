@@ -9,6 +9,7 @@ import 'package:kidbanking/providers/session.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/home/home.dart';
 import 'package:kidbanking/screens/sign_up/components/body.dart';
+import 'package:kidbanking/screens/social/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../../size_config.dart';
@@ -54,7 +55,7 @@ class _BodyState extends State<Body> {
               SocalCard(
                 icon: "assets/images/google.png",
                 press: () {
-                  return signInWithGoogle(context: context);
+                  return MyGoogleSignIn.signInWithGoogle(context: context);
                 },
               ),
               SocalCard(
@@ -70,82 +71,69 @@ class _BodyState extends State<Body> {
     );
   }
 
-  static Future<User?> signInWithGoogle({required BuildContext context}) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    final GoogleSignIn googleSignIn = GoogleSignIn();
-    // TODO delete the next line for sessioning
-    googleSignIn.signOut();
-    GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-    if (googleSignInAccount != null) {
-      final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleSignInAuthentication.accessToken,
-        idToken: googleSignInAuthentication.idToken,
-      );
+  // static Future<User?> signInWithGoogle({required BuildContext context}) async {
+  //   FirebaseAuth auth = FirebaseAuth.instance;
+  //   User? user;
+  //   final GoogleSignIn googleSignIn = GoogleSignIn();
+  //   // TODO delete the next line for sessioning
+  //   googleSignIn.signOut();
+  //   GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
+  //   if (googleSignInAccount != null) {
+  //     final GoogleSignInAuthentication googleSignInAuthentication =
+  //         await googleSignInAccount.authentication;
+  //     final AuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleSignInAuthentication.accessToken,
+  //       idToken: googleSignInAuthentication.idToken,
+  //     );
 
-      try {
-        final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
-        user = userCredential.user;
-        if (user!.emailVerified) {
-          Provider.of<UserProvider>(context, listen: false)
-              .registerUser(user.email, user.displayName);
-          Provider.of<UserProvider>(context, listen: false).loginFinished();
-          await Session.saveSession("email", user.email!);
-          await Session.saveSession("name", user.displayName!);
-          await Provider.of<UserProvider>(context, listen: false)
-              .readUserInformation();
-          Navigator.pushNamed(context, HomeScreen.routeName);
-        }
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            customSnackBar(
-              content:
-                  'The account already exists with a different credential.',
-            ),
-          );
-        } else if (e.code == 'invalid-credential') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            customSnackBar(
-              content: 'Error occurred while accessing credentials. Try again.',
-            ),
-          );
-        }
-      } catch (e) {
-        print("--------exceptionnnnn 222222------");
-        ScaffoldMessenger.of(context).showSnackBar(
-          customSnackBar(
-            content: 'Error occurred using Google Sign-In. Try again.',
-          ),
-        );
-        // handle the error here
-      }
-    }
+  //     try {
+  //       final UserCredential userCredential =
+  //           await auth.signInWithCredential(credential);
+  //       user = userCredential.user;
+  //       if (user!.emailVerified) {
+  //         Provider.of<UserProvider>(context, listen: false)
+  //             .registerUser(user.email, user.displayName);
+  //         Provider.of<UserProvider>(context, listen: false).loginFinished();
+  //         await Session.saveSession("email", user.email!);
+  //         await Session.saveSession("name", user.displayName!);
+  //         await Provider.of<UserProvider>(context, listen: false)
+  //             .readUserInformation();
+  //         Navigator.pushNamed(context, HomeScreen.routeName);
+  //       }
+  //     } on FirebaseAuthException catch (e) {
+  //       if (e.code == 'account-exists-with-different-credential') {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           customSnackBar(
+  //             content:
+  //                 'The account already exists with a different credential.',
+  //           ),
+  //         );
+  //       } else if (e.code == 'invalid-credential') {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           customSnackBar(
+  //             content: 'Error occurred while accessing credentials. Try again.',
+  //           ),
+  //         );
+  //       }
+  //     } catch (e) {
+  //       print("--------exceptionnnnn 222222------");
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         customSnackBar(
+  //           content: 'Error occurred using Google Sign-In. Try again.',
+  //         ),
+  //       );
+  //       // handle the error here
+  //     }
+  //   }
 
-    return user;
-  }
-
-  // Future<UserCredential> signInWithFacebook() async {
-  //   // Trigger the sign-in flow
-  //   final LoginResult loginResult = await FacebookAuth.instance.login();
-  //   // Create a credential from the access token
-  //   final OAuthCredential facebookAuthCredential =
-  //       FacebookAuthProvider.credential(loginResult.accessToken.token);
-  //   // Once signed in, return the UserCredential
-  //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  //   return user;
   // }
 
   Future<Resource?> signInWithFacebook() async {
     try {
-      print("heee");
       User? user;
       FacebookAuth.instance.logOut();
       final LoginResult result = await FacebookAuth.instance.login();
-      print(result);
-
       switch (result.status) {
         case LoginStatus.success:
           final AuthCredential facebookCredential =

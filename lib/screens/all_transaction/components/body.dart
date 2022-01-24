@@ -28,17 +28,15 @@ class Body extends StatelessWidget {
                 children: [
                   SizedBox(height: getProportionateScreenHeight(20)),
                   Expanded(
-                    child: Container(
-                      child: ListView.builder(
-                        itemCount: transactions.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CountingRow(
-                            number: transactions[index].id,
-                            title: transactions[index].title,
-                            amount: transactions[index].balance,
-                          );
-                        },
-                      ),
+                    child: ListView.builder(
+                      itemCount: transactions.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return CountingRow(
+                          number: transactions[index].id,
+                          title: transactions[index].title,
+                          amount: transactions[index].balance,
+                        );
+                      },
                     ),
                   ),
 

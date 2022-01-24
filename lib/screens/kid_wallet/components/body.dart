@@ -169,12 +169,15 @@ class Body extends StatelessWidget {
                                       Map<String, dynamic> data =
                                           snapshot.data!.docs[index].data()
                                               as Map<String, dynamic>;
-                                      return CountingRow(
-                                        number: index + 1,
-                                        title: data['reason'],
-                                        amount: double.parse(
-                                            data['amount'].toString()),
-                                      );
+                                      print(data);
+                                      return data['amount'].length > 0
+                                          ? CountingRow(
+                                              number: index + 1,
+                                              title: data['reason'],
+                                              amount: double.parse(
+                                                  data['amount'].toString()),
+                                            )
+                                          : Text("");
                                     });
                               } else {
                                 return const Text("");
@@ -213,6 +216,7 @@ class Body extends StatelessWidget {
             child: Row(
               children: [
                 DefaultButton(
+                  width: SizeConfig.screenWidth * 0.38,
                   text: 'Withdraw',
                   press: () {
                     Navigator.pushNamed(context, WithDrawScreen.routeName);
@@ -220,6 +224,7 @@ class Body extends StatelessWidget {
                 ),
                 SizedBox(width: getProportionateScreenWidth(30)),
                 DefaultButton(
+                  width: SizeConfig.screenWidth * 0.38,
                   text: 'Deposit',
                   press: () {
                     Navigator.pushNamed(context, DepositScreen.routeName);

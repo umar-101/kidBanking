@@ -79,28 +79,46 @@ class _BodyState extends State<Body> {
                           child: DefaultButton(
                             text: "Done",
                             press: () {
-                              Provider.of<KidProvider>(context, listen: false)
-                                  .deposit(amountController.text);
-                              Provider.of<KidProvider>(context, listen: false)
-                                  .writeTransaction(amountController.text,
-                                      reasonController.text, "deposit")
-                                  .then((value) {
-                                Provider.of<KidProvider>(context, listen: false)
-                                    .readKidInformation(
-                                        Provider.of<KidProvider>(context,
-                                                listen: false)
-                                            .selectedKid
-                                            .username);
+                              print("dsgds");
+                              if (amountController.text.isNotEmpty) {
+                                if (double.parse(amountController.text) > 0) {
+                                  Provider.of<KidProvider>(context,
+                                          listen: false)
+                                      .deposit(amountController.text);
+                                  Provider.of<KidProvider>(context,
+                                          listen: false)
+                                      .writeTransaction(amountController.text,
+                                          reasonController.text, "deposit")
+                                      .then((value) {
+                                    Provider.of<KidProvider>(context,
+                                            listen: false)
+                                        .readKidInformation(
+                                            Provider.of<KidProvider>(context,
+                                                    listen: false)
+                                                .selectedKid
+                                                .username);
 
-                                setState(() {
-                                  amountController.text = '';
-                                  reasonController.text = '';
-                                  msg = "Transaction Done";
-                                });
-                              }).onError((error, stackTrace) {
-                                print(stackTrace);
-                              });
-                              Navigator.pop(context);
+                                    setState(() {
+                                      amountController.text = '';
+                                      reasonController.text = '';
+                                      msg = "Transaction Done";
+                                    });
+                                  }).onError((error, stackTrace) {
+                                    print(stackTrace);
+                                  });
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Amount have to be greater than \$0!')));
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Please Enter the amount of money!')));
+                              }
                             },
                           ),
                         ),
@@ -206,14 +224,16 @@ class FormRow extends StatelessWidget {
       children: [
         SizedBox(
           width: getProportionateScreenWidth(70),
-          child: Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.black87,
-              ),
+          child:
+              // Expanded(
+              //   child:
+              Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black87,
             ),
           ),
+          // ),
         ),
         SizedBox(width: getProportionateScreenWidth(20)),
         Expanded(

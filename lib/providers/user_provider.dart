@@ -7,7 +7,7 @@ import 'package:kidbanking/models/user_model.dart';
 import 'package:kidbanking/providers/session.dart';
 
 class UserProvider extends ChangeNotifier {
-  late UserModel? _userInfo = null;
+  late UserModel? _userInfo = UserModel("", "");
   get userInfo => _userInfo;
   late bool _readingUserInfo = false;
   get readingUserInfo => _readingUserInfo;
@@ -16,6 +16,7 @@ class UserProvider extends ChangeNotifier {
     String? email = await Session.readSession("email");
     String? name = await Session.readSession("name");
     _userInfo = UserModel(email!, name!);
+    notifyListeners();
   }
 
   readUserInformation() async {
@@ -29,8 +30,7 @@ class UserProvider extends ChangeNotifier {
         .get()
         .then(
       (snapshot) {
-        List<DocumentSnapshot> templist;
-        templist = snapshot.docs; // <--- ERROR
+        List<DocumentSnapshot> templist = snapshot.docs; // <--- ERROR
         _readingUserInfo = false;
         var doc = snapshot.docs[0];
         Session.saveSession("email", doc['email']);
@@ -49,7 +49,6 @@ class UserProvider extends ChangeNotifier {
     print(email + " " + password);
     _loggingIn = true;
     notifyListeners();
-
     await auth
         .signInWithEmailAndPassword(email: email, password: password)
         .then(
@@ -100,7 +99,8 @@ class UserProvider extends ChangeNotifier {
   bool _loggedIn = false;
   get loggedIn => _loggedIn;
   isUserLoggedIn() {
-    Session.isKeyAvailable("email").then((value) {
+    Session.isKeyAvailable("email").then((value) async {
+      await readUserInformation();
       _loggedIn = value;
       notifyListeners();
     });

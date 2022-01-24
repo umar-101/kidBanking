@@ -289,13 +289,15 @@ class _FormRowState extends State<FormRow> {
       children: [
         SizedBox(
           width: getProportionateScreenWidth(70),
-          child: Expanded(
-            child: Text(
-              widget.title,
-              style: const TextStyle(
-                color: Colors.black87,
-              ),
+          child:
+              //  Expanded(
+              //   child:
+              Text(
+            widget.title,
+            style: const TextStyle(
+              color: Colors.black87,
             ),
+            // ),
           ),
         ),
         SizedBox(width: getProportionateScreenWidth(25)),

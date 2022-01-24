@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button_outline.dart';
+import 'package:kidbanking/providers/session.dart';
 import 'package:kidbanking/screens/log_in/login.dart';
 import 'package:kidbanking/screens/login_success/login_success_screen.dart';
 import 'package:kidbanking/screens/sign_up/sign_up_screen.dart';
@@ -43,90 +44,7 @@ class _BodyState extends State<Body> {
     return SafeArea(
       child: SizedBox(
         width: double.infinity,
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: getProportionateScreenHeight(20)),
-            currentPage == 2
-                ? Container(
-                    height: SizeConfig.screenHeight * 0.10,
-                  )
-                : SizedBox(
-                    height: SizeConfig.screenHeight * 0.10,
-                    child: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, SignUpScreen.routeName);
-                        },
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                  right: getProportionateScreenWidth(20),
-                                  top: getProportionateScreenHeight(35)),
-                              child: const Text(
-                                'Skip',
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ))),
-                  ),
-            Expanded(
-              flex: 5,
-              child: PageView.builder(
-                onPageChanged: (value) {
-                  setState(() {
-                    currentPage = value;
-                  });
-                },
-                itemCount: splashData.length,
-                itemBuilder: (context, index) => SplashContent(
-                  title: splashData[index]['title'],
-                  image: splashData[index]["image"],
-                  text: splashData[index]['text'],
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: getProportionateScreenWidth(20)),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        splashData.length,
-                        (index) => buildDot(index: index),
-                      ),
-                    ),
-                    const Spacer(flex: 3),
-                    currentPage == 2
-                        ? Row(
-                            children: [
-                              DefaultButton(
-                                text: "Sign up",
-                                press: () {
-                                  Navigator.pushNamed(
-                                      context, SignUpScreen.routeName);
-                                },
-                              ),
-                              SizedBox(width: getProportionateScreenWidth(20)),
-                              DefaultButtonOut(
-                                text: 'Log in',
-                                press: () {
-                                  Navigator.pushNamed(
-                                      context, LogInScreen.routeName);
-                                },
-                              )
-                            ],
-                          )
-                        : Container(),
-                    const Spacer(),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        child: Column(),
       ),
     );
   }
