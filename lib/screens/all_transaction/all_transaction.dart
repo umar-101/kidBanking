@@ -32,10 +32,7 @@ class AllTransactionScreen extends StatelessWidget {
             },
             icon: const Icon(Icons.arrow_back_ios)),
       ),
-      body: SafeArea(
-          child: Body(
-        transactions: transactions,
-      )),
+      body: SafeArea(child: Body()),
     );
   }
 }

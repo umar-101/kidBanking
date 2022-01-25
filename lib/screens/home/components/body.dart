@@ -75,9 +75,7 @@ class _KidDetailsState extends State<KidDetails> {
           stream: _firestore
               .collection("kids")
               .where("email",
-                  isEqualTo: Provider.of<UserProvider>(context, listen: false)
-                      .userInfo
-                      .email)
+                  isEqualTo: Provider.of<UserProvider>(context).userInfo.email)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
@@ -86,7 +84,6 @@ class _KidDetailsState extends State<KidDetails> {
                   itemBuilder: (context, index) {
                     Map<String, dynamic> data = snapshot.data!.docs[index]
                         .data() as Map<String, dynamic>;
-
                     WidgetsBinding.instance?.addPostFrameCallback((_) =>
                         Provider.of<KidProvider>(context, listen: false)
                             .addtotalInPocket(

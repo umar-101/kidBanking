@@ -73,7 +73,7 @@ class KidProvider extends ChangeNotifier {
 
   Future writeGoals(cost, description) async {
     CollectionReference goals = FirebaseFirestore.instance.collection('goals');
-    return await goals.add(
+    await goals.add(
       {
         "email": await Session.readSession("email"),
         'username': selectedKid.username,
@@ -82,7 +82,20 @@ class KidProvider extends ChangeNotifier {
         'description': description,
         "datetime": DateTime.now()
       },
-    );
+    ).then((value) {
+      print(value);
+      readGoal();
+      print("The Goal have been added Added");
+    }).onError((error, stackTrace) {
+      print(stackTrace);
+    }).catchError((error) {
+      print("Failed to add user: $error");
+      if (error.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (error.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    });
   }
 
   widthdraw(amount) async {
@@ -121,6 +134,16 @@ class KidProvider extends ChangeNotifier {
     );
   }
 
+  Future deleteGoal(id) async {
+    await FirebaseFirestore.instance
+        .collection('goals')
+        .doc(id)
+        .delete()
+        .then((value) {
+      readGoal();
+    });
+  }
+
   Future markGoalAsCompleted(id) async {
     await FirebaseFirestore.instance
         .collection('goals')
@@ -132,7 +155,9 @@ class KidProvider extends ChangeNotifier {
   get getGoals => goals;
 
   readGoal() async {
+    print("------------------");
     goals = [];
+
     notifyListeners();
     await FirebaseFirestore.instance
         .collection('goals')
@@ -140,6 +165,7 @@ class KidProvider extends ChangeNotifier {
         .get()
         .then(
       (snapshot) {
+        print("---------++++++++++++---------");
         if (snapshot.docs.isNotEmpty) {
           var doc = snapshot.docs[0];
           goals.add(doc['description']);

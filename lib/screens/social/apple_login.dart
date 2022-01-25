@@ -18,7 +18,7 @@ class AppleLogin {
           'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
         ),
       ),
-      // TODO: Remove these if you have no need for them
+      // TODO: Remove these if you have no ne ed for them
       nonce: 'example-nonce',
       state: 'example-state',
     );

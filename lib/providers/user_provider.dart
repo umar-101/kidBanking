@@ -13,9 +13,14 @@ class UserProvider extends ChangeNotifier {
   get readingUserInfo => _readingUserInfo;
 
   readUserInfo() async {
+    print("here in reading user informations");
+    _readingUserInfo = true;
+    notifyListeners();
     String? email = await Session.readSession("email");
     String? name = await Session.readSession("name");
     _userInfo = UserModel(email!, name!);
+    _readingUserInfo = false;
+    print("reading user information done");
     notifyListeners();
   }
 
@@ -92,7 +97,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   logout() async {
-    Session.cleanAll();
+    Session.readSession("email");
     notifyListeners();
   }
 

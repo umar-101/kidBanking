@@ -19,6 +19,13 @@ class SignForm extends StatefulWidget {
 }
 
 class _SignFormState extends State<SignForm> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Session.saveSessionBool("st", true);
+  }
+
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? name;

@@ -1,12 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/counting_row.dart';
 import 'package:kidbanking/models/trans.dart';
+import 'package:kidbanking/providers/kid_provider.dart';
 
 import 'package:kidbanking/size_config.dart';
+import 'package:provider/provider.dart';
 
 class Body extends StatelessWidget {
-  final List<Transaction> transactions;
-  const Body({Key? key, required this.transactions}) : super(key: key);
+  // final List<Transaction> transactions;
+  Body({
+    Key? key,
+  }) : super(key: key);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +34,35 @@ class Body extends StatelessWidget {
                 children: [
                   SizedBox(height: getProportionateScreenHeight(20)),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: transactions.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return CountingRow(
-                          number: transactions[index].id,
-                          title: transactions[index].title,
-                          amount: transactions[index].balance,
-                        );
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: _firestore
+                          .collection("kid_transactions")
+                          .where("username",
+                              isEqualTo: Provider.of<KidProvider>(context,
+                                      listen: false)
+                                  .selectedKid
+                                  .username)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              Map<String, dynamic> data =
+                                  snapshot.data!.docs[index].data()
+                                      as Map<String, dynamic>;
+                              return CountingRow(
+                                number: index + 1,
+                                title: data['reason'],
+                                amount: double.parse(data['amount']),
+                              );
+                            },
+                          );
+                        } else {
+                          return const Center(
+                            child: Text("No Data"),
+                          );
+                        }
                       },
                     ),
                   ),

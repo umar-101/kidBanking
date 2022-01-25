@@ -20,8 +20,8 @@ class LogInForm extends StatefulWidget {
 
 class _LogInFormState extends State<LogInForm> {
   final _formKey = GlobalKey<FormState>();
-  String? email = "solome@gmail.com";
-  String? password = "12345678";
+  String? email = "";
+  String? password = "";
   // ignore: non_constant_identifier_names
   String? conform_password;
   bool remember = false;

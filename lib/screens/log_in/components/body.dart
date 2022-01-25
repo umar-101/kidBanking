@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidbanking/components/lintText.dart';
 import 'package:kidbanking/components/no_account_text.dart';
 import 'package:kidbanking/components/socal_card.dart';
+import 'package:kidbanking/providers/session.dart';
 import 'package:kidbanking/screens/sign_up/components/body.dart';
 import 'package:kidbanking/screens/social/apple_login.dart';
 import 'package:kidbanking/screens/social/facebook_login.dart';
@@ -17,6 +18,13 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Session.saveSessionBool("st", true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

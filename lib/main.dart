@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     Provider.of<UserProvider>(context, listen: false)
         .isUserLoggedIn(); // check for whether have login session
-
     Session.isKeyAvailable("st").then((value) {
       if (value == true) {
         firstRoute = const LogInScreen();
@@ -52,7 +51,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'kid Banking',
       theme: theme(),
       home: ChangeNotifierProvider(
           create: (context) => UserProvider(),

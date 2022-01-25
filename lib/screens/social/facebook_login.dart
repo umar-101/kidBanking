@@ -13,9 +13,14 @@ class MyFacebooklogin {
   static Future<Resource?> signInWithFacebook(
       {required BuildContext context}) async {
     try {
+      // print("++++++++++++++++++++++++++++++++++");
       User? user;
       FacebookAuth.instance.logOut();
       final LoginResult result = await FacebookAuth.instance.login();
+      // print(result.status);
+      // print(result.message);
+      // print(result.accessToken);
+      // print("-----------------------");
       switch (result.status) {
         case LoginStatus.success:
           final AuthCredential facebookCredential =
@@ -23,20 +28,28 @@ class MyFacebooklogin {
           final userCredential = await FirebaseAuth.instance
               .signInWithCredential(facebookCredential);
           user = userCredential.user;
-          if (user!.emailVerified) {
-            Provider.of<UserProvider>(context, listen: false)
-                .registerUser(user.email, user.displayName);
-            Provider.of<UserProvider>(context, listen: false).loginFinished();
-            await Session.saveSession("email", user.email!);
-            await Session.saveSession("name", user.displayName!);
-            await Provider.of<UserProvider>(context, listen: false)
-                .readUserInformation();
-            Navigator.pushNamed(context, HomeScreen.routeName);
-          }
+          print(user);
+          print(user!.emailVerified);
+          // if (user!.emailVerified) {
+          Provider.of<UserProvider>(context, listen: false)
+              .registerUser(user.email, user.displayName);
+          Provider.of<UserProvider>(context, listen: false).loginFinished();
+          await Session.saveSession("email", user.email!);
+          await Session.saveSession("name", user.displayName!);
+          await Provider.of<UserProvider>(context, listen: false)
+              .readUserInformation();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
+          // }
           return Resource(status: Status.Success);
         case LoginStatus.cancelled:
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login Request Canceled!')));
+
           return Resource(status: Status.Cancelled);
         case LoginStatus.failed:
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Login Failed. retry!')));
           return Resource(status: Status.Error);
         default:
           return null;

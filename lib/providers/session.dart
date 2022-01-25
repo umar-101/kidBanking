@@ -7,6 +7,12 @@ class Session {
     return true;
   }
 
+  static Future<bool> saveSessionBool(String key, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
+    return true;
+  }
+
   static Future<bool> isKeyAvailable(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.containsKey(value);

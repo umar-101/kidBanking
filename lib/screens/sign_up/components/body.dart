@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/lintText.dart';
 import 'package:kidbanking/components/socal_card.dart';
+import 'package:kidbanking/screens/social/apple_login.dart';
+import 'package:kidbanking/screens/social/facebook_login.dart';
+import 'package:kidbanking/screens/social/google_sign_in.dart';
 
 import '../../../size_config.dart';
 import 'sign_form.dart';
@@ -49,15 +52,21 @@ class Body extends StatelessWidget {
             children: [
               SocalCard(
                 icon: "assets/images/apple-logo.png",
-                press: () {},
+                press: () {
+                  AppleLogin.signinWithApple();
+                },
               ),
               SocalCard(
                 icon: "assets/images/google.png",
-                press: () {},
+                press: () {
+                  return MyGoogleSignIn.signInWithGoogle(context: context);
+                },
               ),
               SocalCard(
                 icon: "assets/images/facebook.png",
-                press: () {},
+                press: () {
+                  MyFacebooklogin.signInWithFacebook(context: context);
+                },
               ),
             ],
           ),

@@ -40,9 +40,7 @@ class GoalScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Body(
-        goals: goals,
-      ),
+      body: Body(),
     );
   }
 }

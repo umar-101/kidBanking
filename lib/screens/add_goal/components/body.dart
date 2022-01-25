@@ -16,95 +16,98 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        right: getProportionateScreenWidth(30),
-        left: getProportionateScreenWidth(30),
-        bottom: getProportionateScreenWidth(30),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: SizeConfig.screenHeight * 0.17),
-          Container(
-            width: SizeConfig.screenWidth,
-            height: SizeConfig.screenHeight * 0.45,
-            decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(20),
-                vertical: getProportionateScreenHeight(30),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'New Goal',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: getProportionateScreenWidth(22)),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(40)),
-                  FormRow(
-                    title: 'Cost',
-                    textfield: buildAmountFormField(),
-                  ),
-                  SizedBox(height: getProportionateScreenHeight(8)),
-                  FormRow(
-                    title: 'Description',
-                    textfield: buildReasonFormField(),
-                  ),
-                  const Spacer(),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: getProportionateScreenWidth(10)),
-                    child: SizedBox(
-                      width: SizeConfig.screenWidth,
-                      child: DefaultButton(
-                        text: "Done",
-                        press: () {
-                          Provider.of<KidProvider>(context, listen: false)
-                              .writeGoals(
-                                amountController.text,
-                                reasonController.text,
-                              )
-                              .then((value) {})
-                              .onError((error, stackTrace) {
-                            print(stackTrace);
-                          }).then((value) {
-                            print(value);
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: getProportionateScreenWidth(30),
+          left: getProportionateScreenWidth(30),
+          bottom: getProportionateScreenWidth(30),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: SizeConfig.screenHeight * 0.17),
+            Container(
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.screenHeight * 0.45,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: getProportionateScreenWidth(20),
+                  vertical: getProportionateScreenHeight(30),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'New Goal',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: getProportionateScreenWidth(22)),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(40)),
+                    FormRow(
+                      title: 'Cost',
+                      textfield: buildAmountFormField(),
+                    ),
+                    SizedBox(height: getProportionateScreenHeight(8)),
+                    FormRow(
+                      title: 'Description',
+                      textfield: buildReasonFormField(),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: getProportionateScreenWidth(10)),
+                      child: SizedBox(
+                        width: SizeConfig.screenWidth,
+                        child: DefaultButton(
+                          text: "Done",
+                          press: () {
+                            Provider.of<KidProvider>(context, listen: false)
+                                .writeGoals(
+                              amountController.text,
+                              reasonController.text,
+                            )
+                                .then((value) {
+                              print("------------------");
+                            }).onError((error, stackTrace) {
+                              print(stackTrace);
+                            }).then((value) {
+                              print(value);
 
-                            print("The Goal have been added Added");
-                          }).catchError((error) {
-                            print("Failed to add user: $error");
-                            if (error.code == 'weak-password') {
-                              print('The password provided is too weak.');
-                            } else if (error.code == 'email-already-in-use') {
-                              print(
-                                  'The account already exists for that email.');
-                            }
-                          });
-                          Navigator.pop(context);
-                        },
+                              print("The Goal have been added Added");
+                            }).catchError((error) {
+                              print("Failed to add user: $error");
+                              if (error.code == 'weak-password') {
+                                print('The password provided is too weak.');
+                              } else if (error.code == 'email-already-in-use') {
+                                print(
+                                    'The account already exists for that email.');
+                              }
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(
-                Icons.cancel,
-                color: Colors.grey,
-                size: getProportionateScreenWidth(40),
-              ))
-        ],
+            IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.cancel,
+                  color: Colors.grey,
+                  size: getProportionateScreenWidth(40),
+                ))
+          ],
+        ),
       ),
     );
   }
@@ -179,18 +182,20 @@ class FormRow extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: getProportionateScreenWidth(70),
-          height: 100,
-          child: Expanded(
-            child: Text(
-              title,
-              style: const TextStyle(
-                color: Colors.black87,
-              ),
+          // width: getProportionateScreenWidth(70),
+          // height: 100,
+          child:
+              // Expanded(
+              //   child:
+              Text(
+            title,
+            style: const TextStyle(
+              color: Colors.black87,
             ),
+            // ),
           ),
         ),
-        SizedBox(width: getProportionateScreenWidth(20)),
+        SizedBox(width: getProportionateScreenWidth(10)),
         Expanded(
             child: Padding(
           padding: EdgeInsets.only(
