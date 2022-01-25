@@ -36,7 +36,10 @@ class MyGoogleSignIn {
           await Session.saveSession("name", user.displayName!);
           await Provider.of<UserProvider>(context, listen: false)
               .readUserInformation();
-          Navigator.pushNamed(context, HomeScreen.routeName);
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()));
+
+          // Navigator.pushNamed(context, HomeScreen.routeName);
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {

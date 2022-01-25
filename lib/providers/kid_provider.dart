@@ -15,6 +15,12 @@ class KidProvider extends ChangeNotifier {
 
   double totalInPocket = 0;
   get getTotalInPocket => totalInPocket;
+
+  initPocket() {
+    totalInPocket = 0;
+    notifyListeners();
+  }
+
   addtotalInPocket(double a, index) {
     if (index == 0) totalInPocket = 0;
     totalInPocket = totalInPocket + a;
@@ -22,26 +28,28 @@ class KidProvider extends ChangeNotifier {
   }
 
   readKidInformation(username) async {
-    await FirebaseFirestore.instance
-        .collection('kids')
-        .where('username', isEqualTo: username)
-        .get()
-        .then(
-      (snapshot) {
-        var doc = snapshot.docs[0];
-        Session.saveSession("kid_email", doc['email']);
-        Session.saveSession("kid_name", doc['name']);
-        Session.saveSession("kid_username", doc['username']);
-        _selectedKid = KidModel(
-            email: doc['email'],
-            username: doc['username'],
-            name: doc["name"],
-            age: 10,
-            balance: double.parse(doc['balance'].toString()),
-            image: "assets/images/child.png");
-        notifyListeners();
-      },
-    );
+    if (username != null) {
+      await FirebaseFirestore.instance
+          .collection('kids')
+          .where('username', isEqualTo: username)
+          .get()
+          .then(
+        (snapshot) {
+          var doc = snapshot.docs[0];
+          Session.saveSession("kid_email", doc['email']);
+          Session.saveSession("kid_name", doc['name']);
+          Session.saveSession("kid_username", doc['username']);
+          _selectedKid = KidModel(
+              email: doc['email'],
+              username: doc['username'],
+              name: doc["name"],
+              age: 10,
+              balance: double.parse(doc['balance'].toString()),
+              image: "assets/images/child.png");
+          notifyListeners();
+        },
+      );
+    }
   }
 
   Future registerKid(name, username, birthdate, password) async {
@@ -57,6 +65,7 @@ class KidProvider extends ChangeNotifier {
   }
 
   Future writeTransaction(amount, reason, status) async {
+    print(DateTime.now());
     CollectionReference kids =
         FirebaseFirestore.instance.collection('kid_transactions');
     return await kids.add(
@@ -66,6 +75,7 @@ class KidProvider extends ChangeNotifier {
         'status': status,
         'amount': amount,
         'reason': reason,
+        "date_time": DateTime.now(),
         "datetime": DateFormat.yMd().format(DateTime.now())
       },
     );
@@ -84,7 +94,7 @@ class KidProvider extends ChangeNotifier {
       },
     ).then((value) {
       print(value);
-      readGoal();
+      readGoal(selectedKid.username);
       print("The Goal have been added Added");
     }).onError((error, stackTrace) {
       print(stackTrace);
@@ -112,6 +122,7 @@ class KidProvider extends ChangeNotifier {
             .collection('kids')
             .doc(snapshot.docs[0].id)
             .update({"balance": balance});
+        readKidInformation(selectedKid.username);
       },
     );
   }
@@ -130,6 +141,7 @@ class KidProvider extends ChangeNotifier {
             .collection('kids')
             .doc(snapshot.docs[0].id)
             .update({"balance": balance});
+        readKidInformation(selectedKid.username);
       },
     );
   }
@@ -140,7 +152,7 @@ class KidProvider extends ChangeNotifier {
         .doc(id)
         .delete()
         .then((value) {
-      readGoal();
+      readGoal(selectedKid.username);
     });
   }
 
@@ -154,14 +166,13 @@ class KidProvider extends ChangeNotifier {
   List<String> goals = [];
   get getGoals => goals;
 
-  readGoal() async {
+  readGoal(String kidUn) async {
     print("------------------");
     goals = [];
-
     notifyListeners();
     await FirebaseFirestore.instance
         .collection('goals')
-        .where('username', isEqualTo: selectedKid.username)
+        .where('username', isEqualTo: kidUn)
         .get()
         .then(
       (snapshot) {
@@ -170,7 +181,11 @@ class KidProvider extends ChangeNotifier {
           var doc = snapshot.docs[0];
           goals.add(doc['description']);
           notifyListeners();
+        } else {
+          goals = [];
+          notifyListeners();
         }
+        print("---------++++++++++++---------");
       },
     );
   }

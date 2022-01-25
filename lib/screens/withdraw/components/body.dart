@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button.dart';
 import 'package:kidbanking/components/form_error.dart';
+import 'package:kidbanking/components/my_snack_bar.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:provider/provider.dart';
@@ -88,7 +89,12 @@ class _BodyState extends State<Body> {
                                               listen: false)
                                           .selectedKid
                                           .balance) {
-                                    addError(error: "Insufficient Balance");
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Insufficient Balance!',
+                                                style: TextStyle(
+                                                    color: Colors.red))));
                                   } else {
                                     Provider.of<KidProvider>(context,
                                             listen: false)
@@ -112,12 +118,17 @@ class _BodyState extends State<Body> {
                                         reasonController.text = '';
                                         msg = "Transaction Done";
                                       });
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text('Transaction Done!',
+                                                  style: TextStyle(
+                                                      color: Colors.red))));
                                     }).onError((error, stackTrace) {
                                       print(stackTrace);
                                       Navigator.pop(context);
                                     });
+                                    Navigator.pop(context);
                                   }
-                                  Navigator.pop(context);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/constants.dart';
-import 'package:kidbanking/models/goal.dart';
 import 'package:kidbanking/screens/add_goal/add_goal.dart';
 import 'package:kidbanking/screens/goal/components/body.dart';
 import 'package:kidbanking/screens/kid_wallet/kid_wallet.dart';

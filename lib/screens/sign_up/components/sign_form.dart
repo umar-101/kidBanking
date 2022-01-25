@@ -21,7 +21,6 @@ class SignForm extends StatefulWidget {
 class _SignFormState extends State<SignForm> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Session.saveSessionBool("st", true);
   }
@@ -49,8 +48,10 @@ class _SignFormState extends State<SignForm> {
     }
   }
 
+  bool checked = false;
   bool signingUp = false;
   late Size screen;
+
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size;
@@ -94,6 +95,12 @@ class _SignFormState extends State<SignForm> {
                             setState(() {
                               signingUp = true;
                             });
+                            if (!remember!) {
+                              setState(() {
+                                checked = true;
+                              });
+                              return;
+                            }
                             try {
                               final _auth = FirebaseAuth.instance;
                               await _auth
@@ -112,9 +119,14 @@ class _SignFormState extends State<SignForm> {
                                 await Provider.of<UserProvider>(context,
                                         listen: false)
                                     .readUserInformation();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeScreen()));
 
-                                Navigator.pushNamed(
-                                    context, HomeScreen.routeName);
+                                //   Navigator.pushNamed(
+                                //       context, HomeScreen.routeName);
                               });
                             } on FirebaseAuthException catch (e) {
                               setState(() {
@@ -153,45 +165,45 @@ class _SignFormState extends State<SignForm> {
                     SizedBox(
                       height: getProportionateScreenHeight(10),
                     ),
-
-                    // Row(
-                    //   children: [
-                    //     Checkbox(
-                    //       side: BorderSide(color: Colors.grey.shade400),
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(5),
-                    //       ),
-                    //       value: remember,
-                    //       activeColor: kPrimaryColor,
-                    //       onChanged: (value) {
-                    //         setState(() {
-                    //           remember = value;
-                    //         });
-                    //       },
-                    //     ),
-                    //     Padding(
-                    //       padding:
-                    //           EdgeInsets.only(top: getProportionateScreenHeight(10)),
-                    //       child: Text(
-                    //         "By Creating an account you have to agree\n with our terms & conditios",
-                    //         style: TextStyle(
-                    //           color: Colors.grey,
-                    //           fontSize: getProportionateScreenWidth(12),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     // const Spacer(),
-                    //     // GestureDetector(
-                    //     //   onTap: () => Navigator.pushNamed(
-                    //     //       context, ForgotPasswordScreen.routeName),
-                    //     //   child: const Text(
-                    //     //     "Forgot Password",
-                    //     //     style: TextStyle(decoration: TextDecoration.underline),
-                    //     //   ),
-                    //     // )
-                    //   ],
-                    // ),
-
+                    Row(
+                      children: [
+                        Checkbox(
+                          side: BorderSide(
+                              color:
+                                  checked ? Colors.red : Colors.grey.shade400),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          value: remember,
+                          activeColor: kPrimaryColor,
+                          onChanged: (value) {
+                            setState(() {
+                              remember = value;
+                            });
+                          },
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: getProportionateScreenHeight(10)),
+                          child: Text(
+                            "By Creating an account you have to agree\n with our terms & conditios",
+                            style: TextStyle(
+                              color: checked ? Colors.red : Colors.grey,
+                              fontSize: getProportionateScreenWidth(12),
+                            ),
+                          ),
+                        ),
+                        // const Spacer(),
+                        // GestureDetector(
+                        //   onTap: () => Navigator.pushNamed(
+                        //       context, ForgotPasswordScreen.routeName),
+                        //   child: const Text(
+                        //     "Forgot Password",
+                        //     style: TextStyle(decoration: TextDecoration.underline),
+                        //   ),
+                        // )
+                      ],
+                    ),
                     FormError(errors: errors),
                     SizedBox(height: getProportionateScreenHeight(20)),
                   ],

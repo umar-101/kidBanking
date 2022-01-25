@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidbanking/constants.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/providers/user_provider.dart';
+import 'package:kidbanking/screens/log_in/login.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../../size_config.dart';
@@ -48,7 +49,10 @@ class TopStackContainer extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Provider.of<UserProvider>(context, listen: false).logout();
-                    Navigator.pushNamed(context, "/login");
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LogInScreen()));
                   },
                   child: CircleAvatar(
                     radius: getProportionateScreenWidth(20),

@@ -9,18 +9,37 @@ import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/screens/all_transaction/all_transaction.dart';
 import 'package:kidbanking/screens/deposit/deposit.dart';
 import 'package:kidbanking/screens/goal/goal.dart';
+import 'package:kidbanking/screens/home/home.dart';
 import 'package:kidbanking/screens/withdraw/withdraw.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   Body({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<Body> createState() => _BodyState();
+}
+
+class _BodyState extends State<Body> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    read();
+  }
+
+  read() {
+    // WidgetsBinding.instance?.addPostFrameCallback(
+    //     (_) =>
+    // Provider.of<KidProvider>(context, listen: false).readGoal();
+    // );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +50,12 @@ class Body extends StatelessWidget {
           child: SingleChildScrollView(
             child: Container(
               decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  )),
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
               child: Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: getProportionateScreenWidth(15),
@@ -58,7 +78,7 @@ class Body extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        GoalScreen()));
+                                        const GoalScreen()));
                           },
                           child: Text(
                             'More',
@@ -132,8 +152,13 @@ class Body extends StatelessWidget {
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                              context, AllTransactionScreen.routeName);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AllTransactionScreen()));
+                          // Navigator.pushNamed(
+                          //     context, AllTransactionScreen.routeName);
                         },
                         child: Text(
                           'Last Transactions',
@@ -147,43 +172,65 @@ class Body extends StatelessWidget {
                     SizedBox(height: getProportionateScreenHeight(15)),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(
-                            context, AllTransactionScreen.routeName);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const AllTransactionScreen()));
+
+                        // Navigator.pushNamed(
+                        //     context, AllTransactionScreen.routeName);
                       },
                       child: Container(
-                        height: SizeConfig.screenHeight * 0.30,
-                        child: StreamBuilder<QuerySnapshot>(
-                            stream: _firestore
-                                .collection("kid_transactions")
-                                .where("username",
-                                    isEqualTo: Provider.of<KidProvider>(context,
-                                            listen: false)
-                                        .selectedKid
-                                        .username)
-                                .snapshots(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return ListView.builder(
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> data =
-                                          snapshot.data!.docs[index].data()
-                                              as Map<String, dynamic>;
-                                      print(data);
-                                      return data['amount'].length > 0
-                                          ? CountingRow(
-                                              number: index + 1,
-                                              title: data['reason'],
-                                              amount: double.parse(
-                                                  data['amount'].toString()),
-                                            )
-                                          : Text("");
-                                    });
-                              } else {
-                                return const Text("");
-                              }
-                              // return
-                            }),
+                        height: SizeConfig.screenHeight * 0.32,
+                        padding: const EdgeInsets.only(bottom: 50),
+                        margin: const EdgeInsets.only(bottom: 2),
+                        child: Provider.of<KidProvider>(context, listen: false)
+                                    .selectedKid !=
+                                null
+                            ? StreamBuilder<QuerySnapshot>(
+                                stream: _firestore
+                                    .collection("kid_transactions")
+                                    .where("username",
+                                        isEqualTo: Provider.of<KidProvider>(
+                                                context,
+                                                listen: false)
+                                            .selectedKid
+                                            .username)
+                                    .orderBy("date_time", descending: true)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ListView.builder(
+                                        itemCount: snapshot.data!.docs.length,
+                                        itemBuilder: (context, index) {
+                                          Map<String, dynamic> data =
+                                              snapshot.data!.docs[index].data()
+                                                  as Map<String, dynamic>;
+                                          print(data);
+                                          return data['amount'].length > 0
+                                              ? countingRow(
+                                                  number: index + 1,
+                                                  color: data['status'] ==
+                                                          "deposit"
+                                                      ? kPrimaryColor
+                                                      : Colors.red,
+                                                  title: data['reason'],
+                                                  amount: (data['status'] ==
+                                                              "deposit"
+                                                          ? "+ "
+                                                          : "- ") +
+                                                      "\$" +
+                                                      data['amount'].toString(),
+                                                )
+                                              : Text("");
+                                        });
+                                  } else {
+                                    return const Text("");
+                                  }
+                                  // return
+                                })
+                            : const Center(child: Text("No Kid Registered")),
 
                         // ListView.builder(
                         //   itemCount: transactions.length,
@@ -237,6 +284,44 @@ class Body extends StatelessWidget {
       ],
     );
   }
+
+  Widget countingRow({title, number, amount, color}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: getProportionateScreenHeight(5)),
+      child: SizedBox(
+        width: SizeConfig.screenWidth,
+        height: SizeConfig.screenHeight * 0.08,
+        child: Row(
+          children: [
+            Text(
+              number.toString(),
+              style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: getProportionateScreenWidth(26)),
+            ),
+            SizedBox(width: getProportionateScreenWidth(30)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: getProportionateScreenWidth(14)),
+                ),
+                Text(
+                  amount,
+                  style: TextStyle(
+                      color: color, fontSize: getProportionateScreenWidth(14)),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class TopAppContainer extends StatelessWidget {
@@ -250,13 +335,22 @@ class TopAppContainer extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: getProportionateScreenWidth(20),
       ),
-      child: SizedBox(
-        height: SizeConfig.screenHeight * 0.27,
+      child: Container(
+        height: SizeConfig.screenHeight * 0.29,
         width: SizeConfig.screenWidth,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.arrow_back_ios),
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HomeScreen()));
+                // Navigator.pushNamed(context, "/home_screen");
+              },
+            ),
             const Spacer(),
             Row(
               children: [
@@ -278,7 +372,7 @@ class TopAppContainer extends StatelessWidget {
                       SizedBox(height: getProportionateScreenHeight(15)),
                       Text(
                         Provider.of<KidProvider>(context).selectedKid.name +
-                            "'s\nWallet",
+                            "'s Wallet",
                         style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,

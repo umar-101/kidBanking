@@ -5,9 +5,11 @@ import 'package:kidbanking/components/counting_row.dart';
 import 'package:kidbanking/constants.dart';
 import 'package:kidbanking/models/goal.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
+import 'package:kidbanking/screens/delete_goal/delete_goal.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 
 class Body extends StatelessWidget {
   Body({Key? key}) : super(key: key);
@@ -27,14 +29,13 @@ class Body extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: 250,
+                  height: screen.height * 0.3,
                   width: screen.width,
                   child: StreamBuilder<QuerySnapshot>(
                       stream: _firestore
                           .collection("goals")
                           .where("username",
-                              isEqualTo: Provider.of<KidProvider>(context,
-                                      listen: false)
+                              isEqualTo: Provider.of<KidProvider>(context)
                                   .selectedKid
                                   .username)
                           .where("status", isEqualTo: "pending")
@@ -42,26 +43,32 @@ class Body extends StatelessWidget {
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           return Container(
-                            height: 250,
-                            width: 240,
+                            height: 230,
+                            width: 100,
+                            // color: Colors.amber,
                             margin: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 5),
-                            child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, index) {
-                                  Map<String, dynamic> data =
-                                      snapshot.data!.docs[index].data()
-                                          as Map<String, dynamic>;
-                                  return GoalCard(
-                                    documentId: snapshot.data!.docs[index].id,
-                                    title: data['description'],
-                                    cost: '\$ ' + data['cost'].toString(),
-                                    perValue: 0.5,
-                                    barColor: Colors.red.shade200,
-                                    bgColor: const Color(0xFFFFE7EE),
-                                  );
-                                }),
+                                horizontal: 5, vertical: 3),
+                            child: snapshot.data!.docs.isNotEmpty
+                                ? ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      Map<String, dynamic> data =
+                                          snapshot.data!.docs[index].data()
+                                              as Map<String, dynamic>;
+                                      return GoalCard(
+                                        documentId:
+                                            snapshot.data!.docs[index].id,
+                                        title: data['description'],
+                                        cost: '\$ ' + data['cost'].toString(),
+                                        perValue: 0.5,
+                                        barColor: Colors.red.shade200,
+                                        bgColor: const Color(0xFFFFE7EE),
+                                      );
+                                    })
+                                : const Center(
+                                    child: Text("No Pending Goal"),
+                                  ),
                           );
                         } else {
                           return const Center(child: Text("No Data"));
@@ -90,7 +97,7 @@ class Body extends StatelessWidget {
                 //   ],
                 // ),
 
-                SizedBox(height: getProportionateScreenHeight(25)),
+                SizedBox(height: getProportionateScreenHeight(15)),
                 Text(
                   'Completed Goals',
                   style: TextStyle(
@@ -107,11 +114,12 @@ class Body extends StatelessWidget {
                                 Provider.of<KidProvider>(context, listen: false)
                                     .selectedKid
                                     .username)
+                        .where("status", isEqualTo: "completed")
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return Container(
-                          height: 200,
+                          height: screen.height * 0.4,
                           // color: Colors.red,
                           child: ListView.builder(
                               itemCount: snapshot.data!.docs.length,
@@ -182,19 +190,29 @@ class GoalCard extends StatelessWidget {
         Container(
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       width: 200,
-      height: SizeConfig.screenHeight * 0.45,
+      height: 50, // SizeConfig.screenHeight * 0.4,
       decoration: kcontDecoration.copyWith(color: bgColor),
-      padding: const EdgeInsets.only(bottom: 20, left: 10),
-
+      padding: const EdgeInsets.only(bottom: 5, left: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
             alignment: Alignment.topRight,
             child: IconButton(
-              onPressed: () {
-                Provider.of<KidProvider>(context, listen: false)
-                    .deleteGoal(documentId);
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            DeleteGoalScreen(documentId: documentId)));
+
+                // if (await confirm(
+                //   context,
+                //   content: const Text("Do you want to delete this goal?"),
+                // )) {
+                //   Provider.of<KidProvider>(context, listen: false)
+                //       .deleteGoal(documentId);
+                // }
               },
               icon: const Icon(Icons.cancel),
               color: Colors.grey,
@@ -206,9 +224,9 @@ class GoalCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: SizeConfig.screenWidth * 0.25,
-                  height: SizeConfig.screenHeight * 0.07,
+                Container(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  // width: SizeConfig.screenWidth * 0.25,
                   child: Text(
                     title,
                     style: TextStyle(
@@ -248,7 +266,7 @@ class GoalCard extends StatelessWidget {
                   '80%',
                   style: TextStyle(color: Colors.grey.shade900),
                 ),
-                SizedBox(height: getProportionateScreenHeight(20)),
+                SizedBox(height: getProportionateScreenHeight(5)),
                 InkWell(
                   onTap: () {
                     Provider.of<KidProvider>(context, listen: false)

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/counting_row.dart';
+import 'package:kidbanking/constants.dart';
 import 'package:kidbanking/models/trans.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 
@@ -51,16 +52,26 @@ class Body extends StatelessWidget {
                               Map<String, dynamic> data =
                                   snapshot.data!.docs[index].data()
                                       as Map<String, dynamic>;
-                              return CountingRow(
-                                number: index + 1,
-                                title: data['reason'],
-                                amount: double.parse(data['amount']),
-                              );
+                              // print(data);
+                              return data['amount'].length > 0
+                                  ? countingRow(
+                                      number: index + 1,
+                                      color: data['status'] == "deposit"
+                                          ? kPrimaryColor
+                                          : Colors.red,
+                                      title: data['reason'],
+                                      amount: (data['status'] == "deposit"
+                                              ? "+ "
+                                              : "- ") +
+                                          "\$" +
+                                          data['amount'].toString(),
+                                    )
+                                  : const Text("");
                             },
                           );
                         } else {
                           return const Center(
-                            child: Text("No Data"),
+                            child: Text("No Transaction"),
                           );
                         }
                       },
@@ -79,6 +90,45 @@ class Body extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget countingRow({title, number, amount, color}) {
+    print(amount);
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: getProportionateScreenHeight(10)),
+      child: SizedBox(
+        width: SizeConfig.screenWidth,
+        height: SizeConfig.screenHeight * 0.08,
+        child: Row(
+          children: [
+            Text(
+              number.toString(),
+              style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: getProportionateScreenWidth(26)),
+            ),
+            SizedBox(width: getProportionateScreenWidth(30)),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: getProportionateScreenWidth(14)),
+                ),
+                Text(
+                  amount,
+                  style: TextStyle(
+                      color: color, fontSize: getProportionateScreenWidth(14)),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

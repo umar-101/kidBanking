@@ -43,7 +43,6 @@ class KidDetails extends StatefulWidget {
 
 class _KidDetailsState extends State<KidDetails> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   double totalInPocket = 0;
   calculateAge(String bd) {
     DateTime birthDate = DateTime.parse(bd);
@@ -102,8 +101,15 @@ class _KidDetailsState extends State<KidDetails> {
                               .setKidUn(data['username']);
                           Provider.of<KidProvider>(context, listen: false)
                               .readKidInformation(data['username']);
-                          Navigator.pushNamed(
-                              context, KidWalletScreen.routeName);
+                          Provider.of<KidProvider>(context, listen: false)
+                              .readGoal(data['username']);
+                          // Navigator.pushNamed(
+                          //     context, KidWalletScreen.routeName);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const KidWalletScreen()));
                         },
                         child: Container(
                           width: SizeConfig.screenWidth,

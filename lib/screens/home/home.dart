@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/providers/user_provider.dart';
 import 'package:kidbanking/screens/home/components/body.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   read() {
-    WidgetsBinding.instance?.addPostFrameCallback((_) =>
-        Provider.of<UserProvider>(context, listen: false).readUserInfo());
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      Provider.of<KidProvider>(context, listen: false).initPocket();
+      Provider.of<UserProvider>(context, listen: false).readUserInfo();
+    });
   }
 
   @override

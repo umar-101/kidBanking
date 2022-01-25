@@ -37,9 +37,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    read();
     super.initState();
-    Provider.of<UserProvider>(context, listen: false)
-        .isUserLoggedIn(); // check for whether have login session
+  }
+
+  bool reading = true;
+  bool userLoggedIn = false;
+  read() {
+    Session.isKeyAvailable("email").then((value) {
+      if (value) {
+        userLoggedIn = true;
+        Provider.of<UserProvider>(context, listen: false).readUserInfo();
+      }
+      setState(() {
+        reading = false;
+      });
+    });
     Session.isKeyAvailable("st").then((value) {
       if (value == true) {
         firstRoute = const LogInScreen();
@@ -53,12 +66,13 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'kid Banking',
       theme: theme(),
-      home: ChangeNotifierProvider(
-          create: (context) => UserProvider(),
-          child: Provider.of<UserProvider>(context)
-                  .loggedIn // check for the user login session if the user logged in previosly
-              ? const HomeScreen()
-              : firstRoute),
+      home: reading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ChangeNotifierProvider(
+              create: (context) => UserProvider(),
+              child: userLoggedIn ? const HomeScreen() : firstRoute),
       //  const AppleLogin(),
       // SignInDemo(),
       // const HomeScreen(),

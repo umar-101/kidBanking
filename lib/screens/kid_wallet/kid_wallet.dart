@@ -23,8 +23,8 @@ class _KidWalletScreenState extends State<KidWalletScreen> {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<KidProvider>(context, listen: false).readKidInformation(
           Provider.of<KidProvider>(context, listen: false).kidUn);
-      Provider.of<KidProvider>(context, listen: false).readGoal();
     });
+    // Provider.of<KidProvider>(context, listen: false).readGoal();
   }
 
   @override

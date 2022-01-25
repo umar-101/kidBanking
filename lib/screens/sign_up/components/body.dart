@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kidbanking/components/i_have_account_text.dart';
 import 'package:kidbanking/components/lintText.dart';
 import 'package:kidbanking/components/socal_card.dart';
 import 'package:kidbanking/screens/social/apple_login.dart';
@@ -24,24 +25,7 @@ class Body extends StatelessWidget {
           const SignForm(),
           SizedBox(height: getProportionateScreenHeight(10)),
           SizedBox(height: SizeConfig.screenHeight * 0.01),
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(30)),
-            child: InkWell(
-              onTap: () {
-                Navigator.pushNamed(context, "/login");
-              },
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  "Already have an account? ",
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: getProportionateScreenWidth(14)),
-                ),
-              ),
-            ),
-          ),
+          const HaveAccountText(),
           SizedBox(height: getProportionateScreenHeight(10)),
           const LineText(
             title: 'Signup with',
