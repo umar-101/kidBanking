@@ -79,7 +79,10 @@ class _BodyState extends State<Body> {
                           child: DefaultButton(
                             text: "Done",
                             press: () {
-                              print("dsgds");
+                              if (reasonController.text.length < 2) {
+                                addError(error: "Please write the reason");
+                                return;
+                              }
                               if (amountController.text.isNotEmpty) {
                                 if (double.parse(amountController.text) > 0) {
                                   Provider.of<KidProvider>(context,

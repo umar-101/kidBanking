@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/counting_row.dart';
 import 'package:kidbanking/constants.dart';
-import 'package:kidbanking/models/goal.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/screens/delete_goal/delete_goal.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:confirm_dialog/confirm_dialog.dart';
 
 class Body extends StatelessWidget {
   Body({Key? key}) : super(key: key);
@@ -38,13 +35,14 @@ class Body extends StatelessWidget {
                             .selectedKid
                             .username)
                     .where("status", isEqualTo: "pending")
+                    .orderBy("datetime", descending: true)
+                    .limit(2)
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Container(
                       height: 230,
                       width: 100,
-                      // color: Colors.amber,
                       margin: const EdgeInsets.symmetric(
                           horizontal: 5, vertical: 3),
                       child: snapshot.data!.docs.isNotEmpty

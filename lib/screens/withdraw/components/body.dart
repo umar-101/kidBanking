@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/default_button.dart';
 import 'package:kidbanking/components/form_error.dart';
-import 'package:kidbanking/components/my_snack_bar.dart';
 import 'package:kidbanking/providers/kid_provider.dart';
 import 'package:kidbanking/size_config.dart';
 import 'package:provider/provider.dart';
@@ -82,6 +81,10 @@ class _BodyState extends State<Body> {
                           child: DefaultButton(
                             text: "Done",
                             press: () {
+                              if (reasonController.text.length < 2) {
+                                addError(error: "Please write the reason");
+                                return;
+                              }
                               if (amountController.text.isNotEmpty) {
                                 if (double.parse(amountController.text) > 0) {
                                   if (double.parse(amountController.text) >
