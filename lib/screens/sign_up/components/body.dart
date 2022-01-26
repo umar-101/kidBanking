@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/i_have_account_text.dart';
 import 'package:kidbanking/components/lintText.dart';
@@ -34,12 +36,13 @@ class Body extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SocalCard(
-                icon: "assets/images/apple-logo.png",
-                press: () {
-                  AppleLogin.signinWithApple();
-                },
-              ),
+              if (!Platform.isAndroid)
+                SocalCard(
+                  icon: "assets/images/apple-logo.png",
+                  press: () {
+                    AppleLogin.signinWithApple();
+                  },
+                ),
               SocalCard(
                 icon: "assets/images/google.png",
                 press: () {

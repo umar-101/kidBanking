@@ -181,7 +181,7 @@ class GoalCard extends StatelessWidget {
         //   child:
         Container(
       margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-      width: 200,
+      width: SizeConfig.screenWidth * 0.42,
       height: 50, // SizeConfig.screenHeight * 0.4,
       decoration: kcontDecoration.copyWith(color: bgColor),
       padding: const EdgeInsets.only(bottom: 5, left: 10),

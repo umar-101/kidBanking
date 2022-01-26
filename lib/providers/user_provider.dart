@@ -97,7 +97,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   logout() async {
-    Session.readSession("email");
+    Session.removeSession("email");
     notifyListeners();
   }
 
@@ -109,5 +109,15 @@ class UserProvider extends ChangeNotifier {
       _loggedIn = value;
       notifyListeners();
     });
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> isUserInformationStored(
+      email) async {
+    _readingUserInfo = true;
+    notifyListeners();
+    return await FirebaseFirestore.instance
+        .collection('users_informations')
+        .where('email', isEqualTo: email)
+        .get();
   }
 }
