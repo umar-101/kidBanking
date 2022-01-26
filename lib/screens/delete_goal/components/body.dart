@@ -28,10 +28,10 @@ class _BodyState extends State<Body> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: SizeConfig.screenHeight * 0.17),
+            SizedBox(height: SizeConfig.screenHeight * 0.27),
             Container(
-              width: SizeConfig.screenWidth,
-              height: 300,
+              width: SizeConfig.screenWidth * 0.85,
+              height: SizeConfig.screenHeight * 0.3,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(20)),
               child: Padding(
@@ -39,78 +39,63 @@ class _BodyState extends State<Body> {
                   horizontal: getProportionateScreenWidth(20),
                   vertical: getProportionateScreenHeight(30),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Delete Goal',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: getProportionateScreenWidth(22)),
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(40)),
-                    const Text(
-                      "Do you want to delete the Goal?",
-                      style: TextStyle(fontSize: 18),
-                    ),
-                    SizedBox(height: getProportionateScreenHeight(8)),
-                    Row(
-                      children: [
-                        Checkbox(
-                            side: BorderSide(color: checkColor),
-                            value: check,
-                            onChanged: (v) {
-                              setState(() {
-                                check = v!;
-                              });
-                            }),
-                        Text(
-                          " I am sure to delete this goal!",
-                          style: TextStyle(color: checkColor),
-                        )
-                      ],
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(10)),
-                      child: SizedBox(
-                        width: SizeConfig.screenWidth,
-                        child: DefaultButton(
-                          text: "Done",
-                          press: () {
-                            if (check) {
-                              setState(() {
-                                checkColor = kPrimaryColor;
-                              });
-                              Provider.of<KidProvider>(context, listen: false)
-                                  .deleteGoal(widget.documentId);
-                              Navigator.pop(context);
-                            } else {
-                              setState(
-                                () {
-                                  checkColor = Colors.red;
-                                },
-                              );
-                            }
-                          },
-                        ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Are you sure?',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: getProportionateScreenWidth(22)),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: getProportionateScreenHeight(40)),
+                      const Text(
+                        "Deleted goals cannot be restored",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: getProportionateScreenHeight(8)),
+                      const Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            child: TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(fontSize: 18),
+                                )),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            child: TextButton(
+                                onPressed: () {
+                                  Provider.of<KidProvider>(context,
+                                          listen: false)
+                                      .deleteGoal(widget.documentId);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Goal Deleted!',
+                                              style: TextStyle())));
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(fontSize: 18),
+                                )),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.cancel,
-                  color: Colors.grey,
-                  size: getProportionateScreenWidth(40),
-                ))
           ],
         ),
       ),

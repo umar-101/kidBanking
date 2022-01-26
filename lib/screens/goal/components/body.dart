@@ -18,152 +18,146 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     screen = MediaQuery.of(context).size;
-    return Provider.of<KidProvider>(context).getGoals.length > 0
-        ? Container(
+    return Container(
+      width: screen.width,
+      height: screen.height,
+      padding: EdgeInsets.symmetric(
+          horizontal: getProportionateScreenWidth(15),
+          vertical: getProportionateScreenHeight(25)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: screen.height * 0.3,
             width: screen.width,
-            height: screen.height,
-            padding: EdgeInsets.symmetric(
-                horizontal: getProportionateScreenWidth(15),
-                vertical: getProportionateScreenHeight(25)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: screen.height * 0.3,
-                  width: screen.width,
-                  child: StreamBuilder<QuerySnapshot>(
-                      stream: _firestore
-                          .collection("goals")
-                          .where("username",
-                              isEqualTo: Provider.of<KidProvider>(context)
-                                  .selectedKid
-                                  .username)
-                          .where("status", isEqualTo: "pending")
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Container(
-                            height: 230,
-                            width: 100,
-                            // color: Colors.amber,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 3),
-                            child: snapshot.data!.docs.isNotEmpty
-                                ? ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: snapshot.data!.docs.length,
-                                    itemBuilder: (context, index) {
-                                      Map<String, dynamic> data =
-                                          snapshot.data!.docs[index].data()
-                                              as Map<String, dynamic>;
-                                      return GoalCard(
-                                        documentId:
-                                            snapshot.data!.docs[index].id,
-                                        title: data['description'],
-                                        cost: '\$ ' + data['cost'].toString(),
-                                        perValue: 0.5,
-                                        barColor: Colors.red.shade200,
-                                        bgColor: const Color(0xFFFFE7EE),
-                                      );
-                                    })
-                                : const Center(
-                                    child: Text("No Pending Goal"),
-                                  ),
-                          );
-                        } else {
-                          return const Center(child: Text("No Data"));
-                        }
-                        // return
-                      }),
-                ),
-
-                // Row(
-                //   children: [
-                //     GoalCard(
-                //       title: 'Buy XBox',
-                //       cost: '\$ 140',
-                //       perValue: 0.5,
-                //       barColor: Colors.red.shade200,
-                //       bgColor: const Color(0xFFFFE7EE),
-                //     ),
-                //     SizedBox(width: getProportionateScreenWidth(20)),
-                //     GoalCard(
-                //       title: 'Pokemon Cards',
-                //       cost: '\$ 2.5',
-                //       perValue: 1.0,
-                //       barColor: kPrimaryColor,
-                //       bgColor: Colors.blue.shade100,
-                //     ),
-                //   ],
-                // ),
-
-                SizedBox(height: getProportionateScreenHeight(15)),
-                Text(
-                  'Completed Goals',
-                  style: TextStyle(
-                      color: const Color(0xFFFF7C26),
-                      fontSize: getProportionateScreenWidth(15),
-                      fontWeight: FontWeight.w600),
-                ),
-                SizedBox(height: getProportionateScreenHeight(15)),
-                StreamBuilder<QuerySnapshot>(
-                    stream: _firestore
-                        .collection("goals")
-                        .where("username",
-                            isEqualTo:
-                                Provider.of<KidProvider>(context, listen: false)
-                                    .selectedKid
-                                    .username)
-                        .where("status", isEqualTo: "completed")
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Container(
-                          height: screen.height * 0.4,
-                          // color: Colors.red,
-                          child: ListView.builder(
+            child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection("goals")
+                    .where("username",
+                        isEqualTo: Provider.of<KidProvider>(context)
+                            .selectedKid
+                            .username)
+                    .where("status", isEqualTo: "pending")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      height: 230,
+                      width: 100,
+                      // color: Colors.amber,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 3),
+                      child: snapshot.data!.docs.isNotEmpty
+                          ? ListView.builder(
+                              scrollDirection: Axis.horizontal,
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
                                 Map<String, dynamic> data =
                                     snapshot.data!.docs[index].data()
                                         as Map<String, dynamic>;
-                                print(snapshot.data!.docs[index].id);
-                                return CountingRow(
-                                  number: index + 1,
+                                return GoalCard(
+                                  documentId: snapshot.data!.docs[index].id,
                                   title: data['description'],
-                                  amount: double.parse(data['cost'].toString()),
+                                  cost: '\$ ' + data['cost'].toString(),
+                                  perValue: 0.5,
+                                  barColor: Colors.red.shade200,
+                                  bgColor: const Color(0xFFFFE7EE),
                                 );
-                              }),
-                        );
-                      } else {
-                        return const Text("");
-                      }
-                      // return
-                    }),
+                              })
+                          : const Center(
+                              child: Text("No Pending Goal"),
+                            ),
+                    );
+                  } else {
+                    return const Center(child: Text("No Data"));
+                  }
+                  // return
+                }),
+          ),
 
-                //  ListView.builder(
-                //   itemCount: goals.length,
-                //   itemBuilder: (BuildContext context, int index) {
-                //     return CountingRow(
-                //       number: goals[index].id,
-                //       title: goals[index].title,
-                //       amount: goals[index].balance,
-                //     );
-                //   },
-                // ),
+          // Row(
+          //   children: [
+          //     GoalCard(
+          //       title: 'Buy XBox',
+          //       cost: '\$ 140',
+          //       perValue: 0.5,
+          //       barColor: Colors.red.shade200,
+          //       bgColor: const Color(0xFFFFE7EE),
+          //     ),
+          //     SizedBox(width: getProportionateScreenWidth(20)),
+          //     GoalCard(
+          //       title: 'Pokemon Cards',
+          //       cost: '\$ 2.5',
+          //       perValue: 1.0,
+          //       barColor: kPrimaryColor,
+          //       bgColor: Colors.blue.shade100,
+          //     ),
+          //   ],
+          // ),
 
-                // SizedBox(height: getProportionateScreenHeight(20)),
-                // const CountingRow(
-                //   number: '02',
-                //   title: 'Cards',
-                //   amount: '+ \$20',
-                // ),
-              ],
-            ),
-          )
-        : const Center(
-            child: Text("No Data"),
-          );
+          SizedBox(height: getProportionateScreenHeight(15)),
+          Text(
+            'Completed Goals',
+            style: TextStyle(
+                color: const Color(0xFFFF7C26),
+                fontSize: getProportionateScreenWidth(15),
+                fontWeight: FontWeight.w600),
+          ),
+          SizedBox(height: getProportionateScreenHeight(15)),
+          StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection("goals")
+                  .where("username",
+                      isEqualTo:
+                          Provider.of<KidProvider>(context, listen: false)
+                              .selectedKid
+                              .username)
+                  .where("status", isEqualTo: "completed")
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                    height: screen.height * 0.4,
+                    // color: Colors.red,
+                    child: ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> data = snapshot.data!.docs[index]
+                              .data() as Map<String, dynamic>;
+                          print(snapshot.data!.docs[index].id);
+                          return CountingRow(
+                            number: index + 1,
+                            title: data['description'],
+                            amount: double.parse(data['cost'].toString()),
+                          );
+                        }),
+                  );
+                } else {
+                  return const Text("");
+                }
+                // return
+              }),
+
+          //  ListView.builder(
+          //   itemCount: goals.length,
+          //   itemBuilder: (BuildContext context, int index) {
+          //     return CountingRow(
+          //       number: goals[index].id,
+          //       title: goals[index].title,
+          //       amount: goals[index].balance,
+          //     );
+          //   },
+          // ),
+
+          // SizedBox(height: getProportionateScreenHeight(20)),
+          // const CountingRow(
+          //   number: '02',
+          //   title: 'Cards',
+          //   amount: '+ \$20',
+          // ),
+        ],
+      ),
+    );
   }
 }
 

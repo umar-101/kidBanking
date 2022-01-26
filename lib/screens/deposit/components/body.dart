@@ -103,6 +103,11 @@ class _BodyState extends State<Body> {
                                       reasonController.text = '';
                                       msg = "Transaction Done";
                                     });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text('Transaction Done!',
+                                                style: TextStyle(
+                                                    color: Colors.blue))));
                                   }).onError((error, stackTrace) {
                                     print(stackTrace);
                                   });

@@ -43,6 +43,7 @@ class Body extends StatelessWidget {
                                       listen: false)
                                   .selectedKid
                                   .username)
+                          .orderBy("date_time", descending: true)
                           .snapshots(),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {

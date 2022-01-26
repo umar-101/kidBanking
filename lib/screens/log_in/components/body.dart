@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:kidbanking/components/lintText.dart';
 import 'package:kidbanking/components/no_account_text.dart';
@@ -46,12 +48,13 @@ class _BodyState extends State<Body> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SocalCard(
-                icon: "assets/images/apple-logo.png",
-                press: () {
-                  AppleLogin.signinWithApple();
-                },
-              ),
+              if (!Platform.isAndroid)
+                SocalCard(
+                  icon: "assets/images/apple-logo.png",
+                  press: () {
+                    AppleLogin.signinWithApple();
+                  },
+                ),
               SocalCard(
                 icon: "assets/images/google.png",
                 press: () {

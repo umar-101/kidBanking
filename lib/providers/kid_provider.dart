@@ -27,7 +27,11 @@ class KidProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _readingKidInformation = false;
+  get readingKidInformation => _readingKidInformation;
   readKidInformation(username) async {
+    _readingKidInformation = true;
+    notifyListeners();
     if (username != null) {
       await FirebaseFirestore.instance
           .collection('kids')
@@ -46,6 +50,7 @@ class KidProvider extends ChangeNotifier {
               age: 10,
               balance: double.parse(doc['balance'].toString()),
               image: "assets/images/child.png");
+          _readingKidInformation = false;
           notifyListeners();
         },
       );
@@ -65,7 +70,6 @@ class KidProvider extends ChangeNotifier {
   }
 
   Future writeTransaction(amount, reason, status) async {
-    print(DateTime.now());
     CollectionReference kids =
         FirebaseFirestore.instance.collection('kid_transactions');
     return await kids.add(
@@ -167,16 +171,15 @@ class KidProvider extends ChangeNotifier {
   get getGoals => goals;
 
   readGoal(String kidUn) async {
-    print("------------------");
     goals = [];
     notifyListeners();
     await FirebaseFirestore.instance
         .collection('goals')
         .where('username', isEqualTo: kidUn)
+        .where("status", isEqualTo: "pending")
         .get()
         .then(
       (snapshot) {
-        print("---------++++++++++++---------");
         if (snapshot.docs.isNotEmpty) {
           var doc = snapshot.docs[0];
           goals.add(doc['description']);
@@ -185,7 +188,6 @@ class KidProvider extends ChangeNotifier {
           goals = [];
           notifyListeners();
         }
-        print("---------++++++++++++---------");
       },
     );
   }
